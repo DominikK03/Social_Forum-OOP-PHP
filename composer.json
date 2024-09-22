@@ -1,0 +1,11 @@
+{
+    "require": {
+        "psr/container": "^2.0",
+      "ext-fileinfo": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": "src"
+        }
+    }
+}
