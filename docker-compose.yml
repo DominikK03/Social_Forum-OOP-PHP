@@ -16,13 +16,12 @@ services:
     volumes:
       - ./:/var/www
       - ./docker/nginx:/etc/nginx/conf.d
-
-    db:
-      image: mysql:9.0
-      volumes:
-        - ./storage/mysql:/var/lib/mysql
-      restart: always
-      environment:
-        MYSQL_ROOT_PASSWORD: root
-      ports:
-        - 3307:3306
+  db:
+    image: mysql:8.0
+    volumes:
+      - ./storage/mysql:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3306:3306
