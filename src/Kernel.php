@@ -29,7 +29,7 @@ class Kernel
             return $controller->$controllerMethod($dedicatedRequest);
 
         } catch (RouteNotFoundException) {
-            return new PageNotFoundResponse();
+           die();
         }
     }
 
