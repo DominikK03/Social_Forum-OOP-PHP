@@ -29,7 +29,7 @@ class Request
     }
 
     public function getRequestParam(string $param){
-        return $this->query[$param] ?? null;
+        return $this->request[$param] ?? null;
     }
     public function getFiles(): array{
         return $this->files;
