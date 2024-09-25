@@ -12,6 +12,8 @@ class Response implements ResponseInterface
             private int $statusCode = 200
     )
     {
+        header($this->contentType->value);
+        http_response_code($this->statusCode);
     }
 
     public function getContent(): string

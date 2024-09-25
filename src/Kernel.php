@@ -9,6 +9,7 @@ use app\Core\HTTP\Request\Request;
 use app\Core\HTTP\Response\ErrorResponses\PageNotFoundResponse;
 use app\Core\HTTP\Response\ResponseInterface;
 use app\Core\HTTP\Router;
+use ReflectionMethod;
 
 #[AllowDynamicProperties]
 class Kernel
@@ -35,7 +36,7 @@ class Kernel
 
     private function provideRequest(object $controller, string $methodName, Request $request)
     {
-        $reflectionMethod = new \ReflectionMethod($controller, $methodName);
+        $reflectionMethod = new ReflectionMethod($controller, $methodName);
         $parameters = $reflectionMethod->getParameters();
 
         foreach ($parameters as $param) {
