@@ -9,17 +9,16 @@ use app\Repository\RegistrationRepository;
 
 #[AllowDynamicProperties] class RegistrationService
 {
-    public function __construct(UserFactory $factory, RegistrationRepository $repository)
+    public function __construct(UserFactory $factory, RegistrationValidator $validator)
     {
         $this->factory = $factory;
-        $this->repository = $repository;
+        $this->validator = $validator;
     }
 
-    public function setUserData(string $username, string $email, string $password) : User
+    public function setUserData(string $username, string $email, string $password): User
     {
-        $this->repository->assertEmailExists($email);
-        $this->repository->assertUsernameExists($username);
-        return $this->factory->createUser($username,$email,$password);
+        $this->validator->validate($username, $email);
+        return $this->factory->createUser($username, $email, $password);
     }
 
 }
