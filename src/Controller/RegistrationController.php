@@ -28,8 +28,9 @@ class RegistrationController
         $this->repository = $repository;
         $this->renderer = $renderer;
     }
+
     #[Route('/register', 'GET')]
-    public function registerView(RegistrationPageRequest $request) : ResponseInterface
+    public function registerView(RegistrationPageRequest $request): ResponseInterface
     {
         return new HtmlResponse($this->registerView->renderWithRenderer($this->renderer));
     }
@@ -38,15 +39,16 @@ class RegistrationController
     public function handleRegister(RegistrationDataRequest $request): ResponseInterface
     {
         try {
-            $this->repository->registerUser($this->service->setUserData(
-                $request->getName(),
-                $request->getEmail(),
-                $request->getPassword()
-            ));
-        }catch (EmailAlreadyExistsException $e){
-            return new JsonResponse(['success'=>false, 'message' => $e->getMessage()]);
-        }catch (UsernameAlreadyExistsException $e){
-            return new JsonResponse(['success'=>false, 'message' => $e->getMessage()]);
+            $this->repository->registerUser(
+                $this->service->setUserData(
+                    $request->getName(),
+                    $request->getEmail(),
+                    $request->getPassword()
+                ));
+        } catch (EmailAlreadyExistsException $e) {
+            return new JsonResponse(['success' => false, 'message' => $e->getMessage()]);
+        } catch (UsernameAlreadyExistsException $e) {
+            return new JsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
         return new JsonResponse(['success' => true]);
     }

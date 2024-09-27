@@ -2,19 +2,33 @@
 
 namespace app\Util;
 
-use app\Core\HTTP\Response\JsonResponse;
-use app\Exception\InvalidEmailException;
-use app\Exception\PasswordDoesntMatchException;
+use AllowDynamicProperties;
+use app\mysqlClient;
+use app\Exception\EmailAlreadyExistsException;
+use app\Exception\UsernameAlreadyExistsException;
 
-class StaticValidator
+
+#[AllowDynamicProperties] class StaticValidator
 {
-    /**
-     * @throws PasswordDoesntMatchException
-     */
-    public static function assertCheckPassword(string $password, string $confirmPassword)
+
+
+    public static function assertEmailExists(string $email, mysqlClient $DB)
     {
-        if ($password !== $confirmPassword){
-            throw new PasswordDoesntMatchException();
+        $DB->query('SELECT email FROM user WHERE email = ":email"');
+        $DB->bind(':email', $email);
+        if ($DB->rowCount() > 0)
+        {
+            throw new EmailAlreadyExistsException();
         }
+    }
+    public static function assertUsernameExists(string $username, mysqlClient $DB)
+    {
+        $DB->query('SELECT user_name FROM user WHERE user_name = ":username"');
+        $DB->bind(':username', $username);
+        if ($DB->rowCount() > 0)
+        {
+            throw new UsernameAlreadyExistsException();
+        }
+
     }
 }

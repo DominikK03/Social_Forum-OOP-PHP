@@ -3,7 +3,7 @@
 namespace app\Repository;
 
 use AllowDynamicProperties;
-use app\DB;
+use app\mysqlClient;
 use app\Exception\EmailAlreadyExistsException;
 use app\Exception\UsernameAlreadyExistsException;
 use app\Model\User;
@@ -11,28 +11,11 @@ use app\Model\User;
 #[AllowDynamicProperties]
 class RegistrationRepository
 {
-    public function __construct(DB $DB)
+    public function __construct(mysqlClient $DB)
     {
         $this->db = $DB;
     }
 
-    public function assertEmailExists(string $email)
-    {
-        $this->db->query('SELECT email FROM user');
-        if ($email == $this->db->single())
-        {
-            throw new EmailAlreadyExistsException();
-        }
-    }
-    public function assertUsernameExists(string $username)
-    {
-        $this->db->query('SELECT user_name FROM user');
-        if ($username == $this->db->single())
-        {
-            throw new UsernameAlreadyExistsException();
-        }
-
-    }
 
     public function registerUser(User $user)
     {
