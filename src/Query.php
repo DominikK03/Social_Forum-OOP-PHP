@@ -7,13 +7,14 @@ class Query
     private string $statement = '';
     private string $select = '';
     private string $delete = '';
+    private string $insert = '';
+    private string $update = '';
     private string $from = '';
     private array $joins = [];
     private array $wheres = [];
     private array $orderBys = [];
     private array $groupBys = [];
     private ?int $limit = null;
-    private array $params = [];
 
     public function __construct()
     {
@@ -75,9 +76,9 @@ class Query
     /**
      * @param array $groupBys
      */
-    public function setGroupBys(array $groupBys): void
+    public function addGroupBy(string $field): void
     {
-        $this->groupBys = $groupBys;
+        $this->groupBys[] = $field;
     }
 
     /**
@@ -96,6 +97,29 @@ class Query
         $this->limit = $limit;
     }
 
+    /**
+     * @param string $insert
+     */
+    public function setInsert(string $insert): void
+    {
+        $this->insert = $insert;
+    }
+
+    /**
+     * @param string $update
+     */
+    public function setUpdate(string $update): void
+    {
+        $this->update = $update;
+    }
+    /**
+     * @return array
+     */
+    public function getParams(): array
+    {
+        return $this->params;
+    }
+
     public function formatSelectQuery()
     {
         $joinPart = implode(' ', $this->joins);
@@ -108,8 +132,20 @@ class Query
     }
     public function formatDeleteQuery()
     {
-        $wherePart = count($this->wheres) > 0 ? ' WHERE ' . implode(' AND ', $this->wheres) : '';
+        $wherePart = count($this->wheres) > 0 ? implode(' AND ', $this->wheres) : '';
         $this->statement = sprintf("%s %s %s", $this->delete, $this->from, $wherePart);
+    }
+
+    public function formatInsertQuery()
+    {
+        $this->statement = $this->insert;
+    }
+
+    public function formatUpdateQuery()
+    {
+        $wherePart = count($this->wheres) > 0 ? ' WHERE ' . implode(' AND ', $this->wheres) : '';
+        $this->statement = sprintf("%s %s", $this->update, $wherePart);
+
 
     }
 
