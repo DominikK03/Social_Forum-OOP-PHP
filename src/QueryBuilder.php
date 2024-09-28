@@ -11,62 +11,69 @@ use AllowDynamicProperties;
         $this->query = new Query();
     }
 
-    public function select(string $columnName = '*'): self
+    public function select(string $columnName = '*'): void
     {
-
         $this->query->setSelect(sprintf("SELECT %s FROM", $columnName));
-        return $this;
     }
 
-    public function from(string $tableName, string $alias=''): self
+    public function from(string $tableName, string $alias=''): void
     {
         $this->query->setFrom($alias ? sprintf("%s AS %s", $tableName, $alias) : $tableName);
-        return $this;
     }
 
 
-    public function delete(string $tableName): self
+    public function delete(string $tableName): void
     {
-        $this->query->setDelete(sprintf('DELETE FROM %s', $tableName));
-        return $this;
+        $this->query->setDelete(sprintf('DELETE FROM %s WHERE ', $tableName));
+
     }
 
-    public function join(string $joinedTable, string $alias, string $conditional, string $joinType = 'INNER'): self
+    public function join(string $joinedTable, string $alias, string $conditional, string $joinType = 'INNER'): void
     {
         $this->query->addJoin(sprintf("%s JOIN %s AS %s ON %s", $joinType, $joinedTable, $alias, $conditional));
-        return $this;
+
     }
 
-    public function where(string $field, string $operator, mixed $value): self
+    public function where(string $field, string $operator, mixed $value): void
     {
         $this->query->addWhere(sprintf("%s %s %s", $field, $operator, $value));
-        return $this;
+
     }
 
-    public function orderBy(string $field, string $direction = 'ASC'): self
+    public function orderBy(string $field, string $direction = 'ASC'): void
     {
         $this->query->addOrderBy(sprintf("%s %s", $field, strtoupper($direction)));
-        return $this;
+
     }
 
-    public function groupBys(string $field): self
+    public function groupBy(string $field): void
     {
-        $this->groupBys[] = $field;
-        return $this;
+        $this->query->addGroupBy($field);
+
     }
 
-    public function limit(int $limit): self
+    public function limit(int $limit): void
     {
         $this->query->setLimit($limit);
-        return $this;
+
     }
 
-    public function addParams(array $params): self
+    public function addParams(array $params): void
     {
         foreach ($params as $key => $value) {
             $this->query->setParams([$key => $value]);
         }
-        return $this;
+    }
+    public  function insert(string $tableName, array $data)
+    {
+        $columns = implode(', ', array_keys($data));
+        $values = implode(', ', array_values($data));
+        $this->query->setInsert(sprintf("INSERT INTO %s (%s) VALUES (%s)", $tableName, $columns, $values));
+    }
+    public function update(string $tableName, array $data)
+    {
+        $setPart = implode(", ", array_map(fn($key, $value) => "$key = $value", array_keys($data), array_values($data)));
+        $this->query->setUpdate(sprintf("UPDATE %s SET %s", $tableName, $setPart));
     }
 
     public function getSelectQuery(): Query
@@ -78,24 +85,22 @@ use AllowDynamicProperties;
     {
         $this->query->formatDeleteQuery();
         return $this->query;
-
     }
-
-    //Nie patrz na to 
-    public static function insertInto(string $tableName, array $data): self
+    public function getInsertQuery():Query
     {
-        $fields = implode(", ", array_keys($data));
-        $placeholders = implode(", ", array_map(fn($key) => ":$key", array_keys($data)));
-        $sql = sprintf("INSERT INTO %s (%s) VALUES (%s)", $tableName, $fields, $placeholders);
-        return new self($sql, $data);
+        $this->query->formatInsertQuery();
+        return $this->query;
     }
 
-    public static function update(string $tableName, array $data, string $where): self
+    public function getUpdateQuery(): Query
     {
-        $setPart = implode(", ", array_map(fn($key) => "$key = :$key", array_keys($data)));
-        $sql = sprintf("UPDATE %s SET %s WHERE %s", $tableName, $setPart, $where);
-        return new self($sql, $data);
+        $this->query->formatUpdateQuery();
+        return $this->query;
     }
+
+
+
+
 
 
 }
