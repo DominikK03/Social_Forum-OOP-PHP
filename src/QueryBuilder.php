@@ -36,7 +36,7 @@ use AllowDynamicProperties;
 
     public function where(string $field, string $operator, mixed $value): void
     {
-        $this->query->addWhere(sprintf("%s %s %s", $field, $operator, $value));
+        $this->query->addWhere(sprintf('%s %s "%s"', $field, $operator, $value));
 
     }
 
@@ -67,8 +67,10 @@ use AllowDynamicProperties;
     public  function insert(string $tableName, array $data)
     {
         $columns = implode(', ', array_keys($data));
-        $values = implode(', ', array_values($data));
-        $this->query->setInsert(sprintf("INSERT INTO %s (%s) VALUES (%s)", $tableName, $columns, $values));
+        $values = implode(', ', array_map(function($data) {
+            return '"' . $data . '"';
+        }, array_values($data)));
+        $this->query->setInsert(sprintf('INSERT INTO %s (%s) VALUES (%s)', $tableName, $columns, $values));
     }
     public function update(string $tableName, array $data)
     {

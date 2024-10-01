@@ -30,13 +30,13 @@ class RegistrationController
     }
 
     #[Route('/register', 'GET')]
-    public function registerView(RegistrationPageRequest $request): ResponseInterface
+    public function registrationView(RegistrationPageRequest $request): ResponseInterface
     {
         return new HtmlResponse($this->registerView->renderWithRenderer($this->renderer));
     }
 
     #[Route('/register', 'POST')]
-    public function handleRegister(RegistrationDataRequest $request): ResponseInterface
+    public function handleRegistration(RegistrationDataRequest $request): ResponseInterface
     {
         try {
             $this->repository->registerUser(

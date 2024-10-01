@@ -10,7 +10,7 @@ use app\Controller\RegistrationController;
 use app\Core\DI\Container;
 use app\Core\HTTP\Request\Request;
 use app\Core\HTTP\Router;
-use app\mysqlClient;
+use app\MysqlClient;
 use app\Kernel;
 use app\Repository\RegistrationRepository;
 use app\Service\RegistrationService;
@@ -18,14 +18,14 @@ use app\Service\RegistrationValidator;
 use app\Util\TemplateRenderer;
 
 $container = new Container();
-$container->setConfig(mysqlClient::class,'config',[
+$container->setConfig(MysqlClient::class,'config',[
     'driver'=>'mysql',
     'host'=>'db',
     'database'=>'rettiwt',
     'user' => 'root',
     'pass' => 'root'
 ]);
-$container->register(Router::class, mysqlClient::class, TemplateRenderer::class,
+$container->register(Router::class, MysqlClient::class, TemplateRenderer::class,
     MainPageController::class, AccountController::class, LoginController::class,
     RegistrationController::class, RegistrationRepository::class, RegistrationService::class,
     RegistrationValidator::class)->build();
