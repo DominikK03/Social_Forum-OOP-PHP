@@ -31,21 +31,25 @@ class MysqlClient implements MysqlClientInterface
 
     public function getResults(Query $query): array
     {
-        $statement = $this->pdo->prepare($query->getStatement());
-
-        foreach ($query->getParams() as $param => $value) {
-            $statement->bindValue(":$param", $value);
-        }
-
+        $statement = $this->pdo->prepare($query->showStatement());
         $statement->execute();
 
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getOneOrNullResult(Query $query): array
+    public function getOneOrNullResult(Query $query): ?array
     {
+        $statement = $this->pdo->prepare($query->showStatement());
+        $statement->execute();
 
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
+    }
 
+    public function pushWithoutResults(Query $query)
+    {
+        $statement = $this->pdo->prepare($query->showStatement());
+        $statement->execute();
     }
 
 

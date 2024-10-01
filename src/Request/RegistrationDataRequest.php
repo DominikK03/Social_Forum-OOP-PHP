@@ -5,7 +5,7 @@ namespace app\Request;
 use AllowDynamicProperties;
 use app\Core\HTTP\Request\Request;
 
-#[AllowDynamicProperties] class RegistrationDataRequest
+#[AllowDynamicProperties] class RegistrationDataRequest extends Request
 {
     private string $name;
     private string $email;
