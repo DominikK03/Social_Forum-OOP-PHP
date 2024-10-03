@@ -13,14 +13,10 @@ use app\Util\StaticValidator;
         $this->client = $client;
     }
 
-    public function verifyUser(string $username, string $password): array
+    public function verifyUser(string $username, string $password): string
     {
         StaticValidator::verifyLoginRequest($username, $password, $this->client);
-        $builder = $this->client->createQueryBuilder();
-        $builder->select();
-        $builder->from('user');
-        $builder->where('user_name', '=', $username);
-        return $this->client->getOneOrNullResult($builder->getSelectQuery());
+        return $username;
     }
 
 }

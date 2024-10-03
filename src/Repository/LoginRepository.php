@@ -3,8 +3,10 @@
 namespace app\Repository;
 
 use AllowDynamicProperties;
+use app\Enum\Role;
 use app\Model\User;
 use app\MysqlClient;
+use DateTime;
 
 #[AllowDynamicProperties] class LoginRepository
 {
@@ -13,13 +15,22 @@ use app\MysqlClient;
         $this->client = $client;
     }
 
-    public function handleLogin(array $userData) : User
+    /**
+     * @throws \Exception
+     */
+    public function handleLogin(string $username) : User
     {
+        $builder = $this->client->createQueryBuilder();
+        $builder->select();
+        $builder->from('user');
+        $builder->where('user_name', '=', $username);
+        $userData = $this->client->getOneOrNullResult($builder->getSelectQuery());
         return new User(
             $userData['user_id'],
             $userData['user_name'],
             $userData['email'],
             $userData['password_hash'],
-            $userData['role']);
+            new DateTime($userData['created_at'])
+            );
     }
 }
