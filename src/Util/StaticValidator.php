@@ -42,9 +42,15 @@ use app\Exception\UsernameAlreadyExistsException;
         $builder->from('user');
         $builder->where('user_name', '=', $username);
         $userData = $db->getOneOrNullResult($builder->getSelectQuery());
-        if (is_array($userData)){
+        if (is_null($userData)){
             throw new UserDoesntExistException();
-        } elseif (password_verify($password, $userData['password'])){
+        } elseif (!password_verify($password, $userData['password_hash'])){
+            throw new PasswordDoesntMatchException();
+        }
+    }
+    public static function assertConfirmPassword(string $password, string $passwordHash)
+    {
+        if (!password_verify($password, $passwordHash)){
             throw new PasswordDoesntMatchException();
         }
     }
