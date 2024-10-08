@@ -1,24 +1,30 @@
 $(document).ready(function () {
+    $('#loginForm').on('submit', function (e) {
+        e.preventDefault();
 
-    var formData = {
-        name: $('#name').val(),
-        password: $('#password').val()
-    };
+        const username = $('#name').val();
+        const password = $('#password').val();
 
-    $.ajax({
-        type: 'POST',
-        url: '/login',
-        data: formData,
-        dataType: 'json',
-        success: function (response) {
-            if (response.success) {
-                window.location.href = '/';
-            } else {
-                alert('Błąd: ' + response.message);
+        var formData = {
+            name: username,
+            password: password
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/login',
+            data: formData,
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    window.location.href = '/';
+                } else {
+                    $('.invalid-feedback').show();
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText, error);
             }
-        },
-        error: function (xhr, status, error) {
-            console.error(xhr.responseText, error);
-        }
+        });
     });
 });

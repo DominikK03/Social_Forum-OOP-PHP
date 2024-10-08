@@ -37,7 +37,6 @@ use AllowDynamicProperties;
     public function where(string $field, string $operator, mixed $value): void
     {
         $this->query->addWhere(sprintf('%s %s "%s"', $field, $operator, $value));
-
     }
 
     public function orderBy(string $field, string $direction = 'ASC'): void
@@ -74,7 +73,7 @@ use AllowDynamicProperties;
     }
     public function update(string $tableName, array $data)
     {
-        $setPart = implode(", ", array_map(fn($key, $value) => "$key = $value", array_keys($data), array_values($data)));
+        $setPart = implode(", ", array_map(fn($key, $value) => "$key = '$value'", array_keys($data), array_values($data)));
         $this->query->setUpdate(sprintf("UPDATE %s SET %s", $tableName, $setPart));
     }
 

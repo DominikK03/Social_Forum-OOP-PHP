@@ -4,6 +4,7 @@ namespace app;
 
 use AllowDynamicProperties;
 use app\Core\DI\Container;
+use app\Core\HTTP\Attribute\Route;
 use app\Core\HTTP\Exception\RouteNotFoundException;
 use app\Core\HTTP\Request\Request;
 use app\Core\HTTP\Response\ErrorResponses\PageNotFoundResponse;
@@ -46,7 +47,7 @@ class Kernel
 
                 $dedicatedRequest = new $dedicatedRequestClass($request);
 
-                if (method_exists($dedicatedRequest, 'fromRequest')) {
+                if (method_exists($dedicatedRequest, 'fromRequest') && $_SERVER['REQUEST_METHOD']=== 'POST') {
                     $dedicatedRequest->fromRequest();
                 }
 

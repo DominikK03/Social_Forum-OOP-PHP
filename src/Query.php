@@ -128,7 +128,7 @@ class Query
         $orderByPart = count($this->orderBys) > 0 ? ' ORDER BY ' . implode(', ', $this->orderBys) : '';
         $limitPart = $this->limit !== null ? ' LIMIT ' . $this->limit : '';
 
-        $this->statement = sprintf("%s %s %s%s%s%s%s", $this->select, $this->from, $joinPart, $wherePart, $groupByPart, $orderByPart, $limitPart);
+        $this->statement = sprintf("%s %s %s%s%s%s%s", $this->select, $this->from, $wherePart, $joinPart, $groupByPart, $orderByPart, $limitPart);
     }
     public function formatDeleteQuery()
     {

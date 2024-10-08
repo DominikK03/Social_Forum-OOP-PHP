@@ -63,6 +63,8 @@ $(document).ready(function () {
         }
         checkFormValidity();
     });
+    $('.email-exist').hide().removeClass('text-danger');
+    $('.username-exist').hide().removeClass('text-danger');
 
     $('#registrationForm').on('submit', function (e) {
         e.preventDefault();
@@ -105,7 +107,11 @@ $(document).ready(function () {
                     if (response.success) {
                         window.location.href = '/login';
                     } else {
-                        alert('Błąd: ' + response.message);
+                        if (response.message === "Username already exists") {
+                            $(".username-exist").text("Username is already taken.").show().addClass('text-danger');
+                        } else if (response.message === "E-mail already exists") {
+                            $(".email-exist").text("Email is already taken.").show().addClass('text-danger');
+                        }
                     }
                 },
                 error: function (xhr, status, error) {
