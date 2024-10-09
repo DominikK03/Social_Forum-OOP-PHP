@@ -18,9 +18,8 @@ use DateTime;
 
     public function setImageData(string $imageTmpName, string $imageType, int $imageSize): Image
     {
-        $imageName = new DateTime();
         $this->validate->validateImage($imageType, $imageSize);
-        return $this->imageFactory->createImage($imageName->format("YmdHi"), $imageTmpName, $imageType, $imageSize);
+        return $this->imageFactory->createImage($imageTmpName, $imageType, $imageSize);
     }
 
 

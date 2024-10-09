@@ -8,6 +8,7 @@ const STORAGE_IMAGES_PATH = '../public/storage/images';
 use app\Controller\AccountController;
 use app\Controller\AuthController;
 use app\Controller\MainPageController;
+use app\Controller\PostPageController;
 use app\Core\DI\Container;
 use app\Core\HTTP\Request\Request;
 use app\Core\HTTP\Router;
@@ -15,8 +16,13 @@ use app\MysqlClient;
 use app\Kernel;
 use app\Repository\AccountRepository;
 use app\Repository\AuthRepository;
+use app\Repository\ImageRepository;
+use app\Repository\PostRepository;
 use app\Service\AccountService;
 use app\Service\AuthService;
+use app\Service\ImageService;
+use app\Service\ImageValidator;
+use app\Service\PostService;
 use app\Service\RegistrationValidator;
 use app\Util\TemplateRenderer;
 
@@ -34,12 +40,18 @@ $container->register(
     TemplateRenderer::class,
     MainPageController::class,
     AccountController::class,
+    PostPageController::class,
     AccountService::class,
     AccountRepository::class,
     AuthController::class,
     AuthService::class,
     AuthRepository::class,
-    RegistrationValidator::class
+    RegistrationValidator::class,
+    ImageRepository::class,
+    ImageService::class,
+    PostService::class,
+    PostRepository::class,
+    ImageValidator::class
 )->build();
 
 
@@ -49,7 +61,8 @@ $container->get(Router::class)->registerControllers(
         [
             MainPageController::class,
             AuthController::class,
-            AccountController::class
+            AccountController::class,
+            PostPageController::class
         ]
 );
 
