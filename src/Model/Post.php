@@ -14,9 +14,9 @@ class Post
                                 private string            $title,
                                 private DateTimeInterface $createdAt,
                                 private User              $user,
-                                private string            $content = '',
-                                private string            $image = '',
-                                private string            $link = '')
+                                private ?Image            $image,
+                                private ?string           $content = null,
+                                private ?string           $link = null)
     {
     }
 
@@ -44,13 +44,6 @@ class Post
         $this->link = $link;
     }
 
-    /**
-     * @param string $image
-     */
-    public function setImage(string $image): void
-    {
-        $this->image = $image;
-    }
 
     /**
      * @return UuidInterface
@@ -61,41 +54,41 @@ class Post
     }
 
     /**
-     * @return string
+     * @return User
      */
-    public function getUser(): string
+    public function getUser(): User
     {
-        return $this->user->getUserId();
+        return $this->user;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getContent(): string
+    public function getContent(): ?string
     {
         return $this->content;
     }
 
     /**
-     * @return string
+     * @return Image|null
      */
-    public function getImage(): string
+    public function getImage(): ?Image
     {
         return $this->image;
     }
 
     /**
-     * @return DataTime
+     * @return DateTimeInterface
      */
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLink(): string
+    public function getLink(): ?string
     {
         return $this->link;
     }

@@ -50,6 +50,8 @@ class MysqlClient implements MysqlClientInterface
     {
         $statement = $this->pdo->prepare($query->showStatement());
         $statement->execute();
+
+
     }
 
 

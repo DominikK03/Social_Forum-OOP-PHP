@@ -2,6 +2,8 @@
 
 require '../vendor/autoload.php';
 const TEMPLATE_PATH = '../templates';
+const STORAGE_IMAGES_PATH = '../public/storage/images';
+
 
 use app\Controller\AccountController;
 use app\Controller\AuthController;
@@ -48,7 +50,6 @@ $container->get(Router::class)->registerControllers(
             MainPageController::class,
             AuthController::class,
             AccountController::class
-
         ]
 );
 

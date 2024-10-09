@@ -2,6 +2,8 @@ $(document).ready(function () {
     $('.change-password-btn').click(function () {
         $('#password-form').toggleClass('d-none');
         $('.invalid-feedback').hide();
+        $('.success-password').hide();
+        $('.invalid-password').hide();
         $('#newPassword, #confirmPassword').removeClass('is-invalid is-valid');
         $('.save-password-btn').attr('disabled', 'disabled');
     });
@@ -40,6 +42,7 @@ $(document).ready(function () {
         const newPassword = $('#newPassword').val();
         const confirmPassword = $('#confirmPassword').val();
 
+
         if (newPassword !== confirmPassword) {
             $('#confirmPassword').addClass('is-invalid');
             $('#confirmPassword').next('.invalid-feedback').show();
@@ -58,10 +61,13 @@ $(document).ready(function () {
             data: formData,
             success: function (response) {
                 if (response.success) {
-                    alert('Password updated successfully!');
                     $('#password-form').addClass('d-none');
+                    $(".success-password").removeAttr('hidden').show().addClass('text-success');
+
                 } else {
-                    alert("Error: " + response.message);
+                    if (response.message === "Invalid password") {
+                        $(".invalid-password").text("Invalid password.").show().addClass('text-danger');
+                    }
                 }
             },
             error: function (xhr, status, error) {

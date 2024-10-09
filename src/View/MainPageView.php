@@ -7,15 +7,15 @@ use app\Util\TemplateRenderer;
 
 #[AllowDynamicProperties] class MainPageView implements ViewInterface
 {
-    public function __construct(TeewtView $teewtView)
+    public function __construct(PostView $postView)
     {
-        $this->teewtView = $teewtView;
+        $this->postView = $postView;
     }
 
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
         return $renderer->renderHtml('mainpage.html', [
-            'Teewt' => $this->teewtView->renderWithRenderer($renderer)
+            '{{Post}}' => $this->postView->renderWithRenderer($renderer)
         ]);
     }
 }
