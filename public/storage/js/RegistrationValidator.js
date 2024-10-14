@@ -108,8 +108,10 @@ $(document).ready(function () {
                         window.location.href = '/login';
                     } else {
                         if (response.message === "Username already exists") {
+                            $(".email-exist").text("Email is already taken.").hide().removeClass('text-danger');
                             $(".username-exist").text("Username is already taken.").show().addClass('text-danger');
                         } else if (response.message === "E-mail already exists") {
+                            $(".username-exist").text("Username is already taken.").hide().removeClass('text-danger');
                             $(".email-exist").text("Email is already taken.").show().addClass('text-danger');
                         }
                     }

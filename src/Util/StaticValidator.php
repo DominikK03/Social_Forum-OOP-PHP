@@ -16,40 +16,42 @@ use app\Exception\UsernameAlreadyExistsException;
 {
 
 
-    public static function assertEmailExists(string $email, MysqlClient $db)
+    /**
+     * @throws EmailAlreadyExistsException
+     */
+    public static function assertEmailExists(string $email, ?array $users)
     {
-        $builder = $db->createQueryBuilder();
-        $builder->select('email');
-        $builder->from('user');
-        $builder->where('email', '=', $email);
-        if (is_array($db->getOneOrNullResult($builder->getSelectQuery()))) {
+        if (!is_null($users) && in_array($email, $users)) {
             throw new EmailAlreadyExistsException();
         }
     }
-    public static function assertUsernameExists(string $username, MysqlClient $db)
+
+    /**
+     * @throws UsernameAlreadyExistsException
+     */
+    public static function assertUsernameExists(string $username, ?array $users)
     {
-        $builder = $db->createQueryBuilder();
-        $builder->select('user_name');
-        $builder->from('user');
-        $builder->where('user_name', '=', $username);
-        if (is_array($db->getOneOrNullResult($builder->getSelectQuery()))) {
+        if (!is_null($users) && in_array($username, $users)) {
             throw new UsernameAlreadyExistsException();
         }
     }
 
-    public static function verifyLoginRequest(string $username, string $password, MysqlClient $db)
+    /**
+     * @throws PasswordDoesntMatchException
+     * @throws UserDoesntExistException
+     */
+    public static function verifyLoginRequest(?object $user, string $username, string $password, ?string $passwordHash)
     {
-        $builder = $db->createQueryBuilder();
-        $builder->select();
-        $builder->from('user');
-        $builder->where('user_name', '=', $username);
-        $userData = $db->getOneOrNullResult($builder->getSelectQuery());
-        if (is_null($userData)){
+        if ($user == null || $username !== $user->getUsername()){
             throw new UserDoesntExistException();
-        } elseif (!password_verify($password, $userData['password_hash'])){
+        } elseif (!password_verify($password, $passwordHash)){
             throw new PasswordDoesntMatchException();
         }
     }
+
+    /**
+     * @throws PasswordDoesntMatchException
+     */
     public static function assertConfirmPassword(string $password, string $passwordHash)
     {
         if (!password_verify($password, $passwordHash)){
@@ -57,6 +59,9 @@ use app\Exception\UsernameAlreadyExistsException;
         }
     }
 
+    /**
+     * @throws FileIsntImageException
+     */
     public static function assertIsImage(string $fileType)
     {
         $allowedTypes = array('image/jpg', 'image/jpeg', 'image/png', 'image/gif');

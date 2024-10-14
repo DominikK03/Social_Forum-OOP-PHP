@@ -5,7 +5,7 @@ namespace app\Request;
 use AllowDynamicProperties;
 use app\Core\HTTP\Request\Request;
 
-#[AllowDynamicProperties] class LoginRequest extends Request
+#[AllowDynamicProperties] class LoginRequest extends Request implements RequestInterface
 {
     private string $name;
     private string $password;
@@ -13,12 +13,16 @@ use app\Core\HTTP\Request\Request;
     {
         $this->request = $request;
     }
-
-    public function fromRequest()
+    public function fromPostRequest()
     {
         $this->name = $this->request->getRequestParam('name');
         $this->password = $this->request->getRequestParam('password');
     }
+
+    public function fromGetRequest()
+    {
+    }
+
 
     /**
      * @return string
@@ -35,4 +39,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->password;
     }
+
+
 }

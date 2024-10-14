@@ -4,19 +4,20 @@ namespace app\Repository;
 
 use AllowDynamicProperties;
 use app\Model\Post;
-use app\MysqlClient;
+use app\MysqlClientInterface;
 
 #[AllowDynamicProperties] class PostRepository
 {
-    public function __construct(MysqlClient $client)
+    public function __construct(MysqlClientInterface $client)
     {
         $this->client = $client;
     }
 
     public function insertPost(Post $post)
     {
-        $builder = $this->client->createQueryBuilder();
-        $builder->insert('post', [
+        $builder = $this->client
+            ->createQueryBuilder()
+            ->insert('post', [
             'post_id' => $post->getPostId(),
             'title' => $post->getTitle(),
             'content' => $post->getContent(),
@@ -26,5 +27,15 @@ use app\MysqlClient;
             'user_id' => $post->getUser()->getUserId()
         ]);
         $this->client->pushWithoutResults($builder->getInsertQuery());
+    }
+    public function getPosts(): array
+    {
+        $builder = $this->client
+            ->createQueryBuilder()
+            ->select("post.title, post.content, post.image, post.link, post.created_at, user.user_name")
+            ->from('post')
+            ->join('user','post.user_id = user.user_id')
+            ->orderBy("post.created_at","DESC");
+        return $this->client->getResults($builder->getSelectQuery());
     }
 }

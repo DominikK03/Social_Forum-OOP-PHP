@@ -8,6 +8,7 @@ use app\Core\HTTP\Response\HtmlResponse;
 use app\Core\HTTP\Response\JsonResponse;
 use app\Core\HTTP\Response\RedirectResponse;
 use app\Core\HTTP\Response\ResponseInterface;
+use app\Enum\Role;
 use app\Exception\EmailAlreadyExistsException;
 use app\Exception\PasswordDoesntMatchException;
 use app\Exception\UserDoesntExistException;
@@ -23,14 +24,17 @@ use app\View\RegisterView;
 
 #[AllowDynamicProperties] class AuthController
 {
-    public function __construct(TemplateRenderer $renderer, AuthService $service, AuthRepository $repository)
+    public function __construct(
+        TemplateRenderer $renderer,
+        AuthService      $service,
+        AuthRepository   $repository)
     {
         $this->service = $service;
         $this->repository = $repository;
         $this->renderer = $renderer;
         $this->loginView = new LoginView();
         $this->registerView = new RegisterView();
-        if (session_status()=== PHP_SESSION_NONE){
+        if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
     }
@@ -60,28 +64,29 @@ use app\View\RegisterView;
     }
 
     #[Route('/login', 'GET')]
-    public function loginView(LoginRequest $request) : ResponseInterface
+    public function loginView(LoginRequest $request): ResponseInterface
     {
         return new HtmlResponse($this->loginView->renderWithRenderer($this->renderer));
     }
 
     #[Route('/login', 'POST')]
-    public function handleLogin(LoginRequest $request) : ResponseInterface
+    public function handleLogin(LoginRequest $request): ResponseInterface
     {
         try {
             $this->service->loginUser($request->getName(), $request->getPassword());
-        }catch (UserDoesntExistException $e){
-            return new JsonResponse(['success'=>false, 'message' => $e->getMessage()]);
-        }catch (PasswordDoesntMatchException $e){
-            return new JsonResponse(['success'=>false, 'message' => $e->getMessage()]);
+        } catch (UserDoesntExistException $e) {
+            return new JsonResponse(['success' => false, 'message' => $e->getMessage()]);
+        } catch (PasswordDoesntMatchException $e) {
+            return new JsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
-        return new JsonResponse(['success'=>true]);
+        return new JsonResponse(['success' => true]);
     }
-    #[Route('/logout', 'GET')]
-    public function logout(LogoutRequest $request) : ResponseInterface
+
+    #[Route('/logout', 'GET', [Role::user, Role::admin])]
+    public function logout(LogoutRequest $request): ResponseInterface
     {
         $this->service->logoutUser();
-        return new RedirectResponse('/',['loginStatus'=>'logout']);
+        return new RedirectResponse('/login', ['loginStatus' => 'logout']);
     }
 
 }

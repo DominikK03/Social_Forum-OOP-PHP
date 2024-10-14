@@ -6,7 +6,9 @@ use AllowDynamicProperties;
 use app\Core\HTTP\Attribute\Route;
 use app\Core\HTTP\Response\HtmlResponse;
 use app\Core\HTTP\Response\JsonResponse;
+use app\Core\HTTP\Response\RedirectResponse;
 use app\Core\HTTP\Response\ResponseInterface;
+use app\Enum\Role;
 use app\Exception\FileIsntImageException;
 use app\Exception\NotProperSizeException;
 use app\Repository\ImageRepository;
@@ -23,12 +25,13 @@ use app\View\PostView;
 
 #[AllowDynamicProperties] class MainPageController
 {
-    public function __construct(TemplateRenderer $renderer,
-                                AuthService $authService,
-                                ImageService    $imageService,
-                                ImageRepository $imageRepository,
-                                PostService     $postService,
-                                PostRepository  $postRepository)
+    public function __construct(
+        TemplateRenderer $renderer,
+        AuthService      $authService,
+        ImageService     $imageService,
+        ImageRepository  $imageRepository,
+        PostService      $postService,
+        PostRepository   $postRepository)
     {
         $this->postService = $postService;
         $this->postRepository = $postRepository;
@@ -36,31 +39,32 @@ use app\View\PostView;
         $this->imageRepository = $imageRepository;
         $this->authService = $authService;
         $this->renderer = $renderer;
-        $this->postView = new PostView([]);
-        $this->mainpageView = new MainPageView($this->postView);
-        $this->loggedMainPageView = new LoggedMainPageView($this->postView);
-
-
     }
 
-    #[Route('/', 'GET')]
-    public function MainPage(MainPageRequest $request) :  ResponseInterface
+    #[Route('/', 'GET', [Role::user, Role::admin])]
+    public function MainPage(MainPageRequest $request): ResponseInterface
     {
-        if ($this->authService->isLoggedIn()){
-            return new HtmlResponse($this->loggedMainPageView->renderWithRenderer($this->renderer));
-        }else{
-            return new HtmlResponse($this->mainpageView->renderWithRenderer($this->renderer));
+        if ($this->authService->isLoggedIn()) {
+            $postView = new PostView($this->postRepository->getPosts());
+            $loggedMainPageView = new LoggedMainPageView($postView);
+            return new HtmlResponse($loggedMainPageView->renderWithRenderer($this->renderer));
+        } else {
+            return new RedirectResponse('/login', []);
         }
 
     }
 
-    #[Route('/postData', 'POST')]
+    #[Route('/postData', 'POST', [Role::user, Role::admin])]
     public function handlePost(PostRequest $request): ResponseInterface
     {
         try {
-            if (isset($_FILES['image'])) {
+            if (!empty($request->getImage())) {
+                $currentData = new \DateTime();
+                $imageName = $currentData->format('Ymdhi') . "."
+                    .str_replace('image/','', $request->getImageType());
                 $this->imageRepository->uploadImage(
                     $image = $this->imageService->setImageData(
+                        $imageName,
                         $request->getImageTmpName(),
                         $request->getImageType(),
                         $request->getImageSize())
@@ -85,9 +89,8 @@ use app\View\PostView;
         } catch (NotProperSizeException) {
             return new JsonResponse(['success' => false]);
         }
-        return new JsonResponse(['success'=>true]);
+        return new JsonResponse(['success' => true]);
     }
-
 
 
 }

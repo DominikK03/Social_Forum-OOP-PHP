@@ -5,11 +5,12 @@ namespace app\Service;
 use AllowDynamicProperties;
 use app\Model\User;
 use app\Repository\AuthRepository;
+use app\Repository\AuthRepositoryInterface;
 use app\Util\StaticValidator;
 
 #[AllowDynamicProperties] class AccountService
 {
-    public function __construct(AuthRepository $authRepository)
+    public function __construct(AuthRepositoryInterface $authRepository)
     {
         $this->authRepository = $authRepository;
     }

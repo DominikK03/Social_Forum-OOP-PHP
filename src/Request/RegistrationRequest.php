@@ -5,7 +5,7 @@ namespace app\Request;
 use AllowDynamicProperties;
 use app\Core\HTTP\Request\Request;
 
-#[AllowDynamicProperties] class RegistrationRequest extends Request
+#[AllowDynamicProperties] class RegistrationRequest extends Request implements RequestInterface
 {
     private string $name;
     private string $email;
@@ -16,13 +16,17 @@ use app\Core\HTTP\Request\Request;
         $this->request = $request;
     }
 
-    public function fromRequest()
+    public function fromPostRequest()
     {
         $this->name = $this->request->getRequestParam('name');
         $this->email = $this->request->getRequestParam('email');
         $this->password = $this->request->getRequestParam('password');
-        $this->confirmPassword = $this->request->getRequestParam('confirmPassword');
+        $this->confirmPassword = $this->request->getRequestParam('confirmPassword');    }
+
+    public function fromGetRequest()
+    {
     }
+
 
     /**
      * @return string
@@ -55,4 +59,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->confirmPassword;
     }
+
+
 }

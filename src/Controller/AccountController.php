@@ -9,53 +9,97 @@ use app\Core\HTTP\Response\HtmlResponse;
 use app\Core\HTTP\Response\JsonResponse;
 use app\Core\HTTP\Response\RedirectResponse;
 use app\Core\HTTP\Response\ResponseInterface;
+use app\Enum\Role;
+use app\Exception\FileIsntImageException;
+use app\Exception\NotProperSizeException;
 use app\Exception\PasswordDoesntMatchException;
 use app\Repository\AccountRepository;
+use app\Repository\ImageRepository;
 use app\Request\AccountRequest;
 use app\Service\AccountService;
 use app\Service\AuthService;
+use app\Service\ImageService;
 use app\Util\TemplateRenderer;
 use app\View\AccountView;
 
 #[AllowDynamicProperties] class AccountController
 {
-    public function __construct(TemplateRenderer  $renderer,
-                                AuthService       $authService,
-                                AccountService    $accountService,
-                                AccountRepository $accountRepository)
+    public function __construct(
+        TemplateRenderer  $renderer,
+        AuthService       $authService,
+        AccountService    $accountService,
+        AccountRepository $accountRepository,
+        ImageRepository   $imageRepository,
+        ImageService      $imageService)
     {
         $this->authService = $authService;
         $this->accountService = $accountService;
         $this->accountRepository = $accountRepository;
-        $this->accountView = new AccountView();
         $this->renderer = $renderer;
+        $this->imageRepository = $imageRepository;
+        $this->imageService = $imageService;
     }
 
-    #[Route('/account', 'GET')]
+    #[Route('/account', 'GET', [Role::user, Role::admin])]
     public function accountView(AccountRequest $request): ResponseInterface
     {
         if ($this->authService->isLoggedIn()) {
-            return new HtmlResponse($this->accountView->renderWithRenderer($this->renderer));
+            $accountView = new AccountView([
+                '{{Username}}' => $request->getName(),
+                '{{Email}}' => $request->getEmail(),
+                '{{CreatedAt}}' => $request->getCreatedAt(),
+                '{{Avatar}}' =>
+                    '<img src="avatars/' . $this->accountRepository->getUserAvatar($request->getName()) . '" class="personal-avatar" alt="avatar">'
+            ]);
+            return new HtmlResponse($accountView->renderWithRenderer($this->renderer));
         } else {
             return new RedirectResponse('/', ['loginStatus' => 'not-logged-in']);
         }
     }
 
-    #[Route('/passwordChange', 'POST')]
-    public function passwordChange(AccountRequest $request) : ResponseInterface
+    #[Route('/admin', 'GET', [Role::admin])]
+    public function adminView(AccountRequest $request): ResponseInterface
+    {
+        echo 'hellow';
+
+    }
+
+    #[Route('/passwordChange', 'POST', [Role::user, Role::admin])]
+    public function passwordChange(AccountRequest $request): ResponseInterface
     {
         try {
             $this->accountRepository->updatePassword(
                 $this->accountService->validateData(
                     $request->getName(),
                     $request->getPassword()),
-                    $request->getNewPassword()
+                $request->getNewPassword()
             );
         } catch (PasswordDoesntMatchException) {
             return new JsonResponse(['success' => false, 'message' => 'Invalid password']);
         }
-        return new JsonResponse(['success'=>true]);
+        return new JsonResponse(['success' => true]);
+    }
 
+    #[Route('/setAvatarImage', 'POST', [Role::user, Role::admin])]
+    public function setAvatarImage(AccountRequest $request): ResponseInterface
+    {
+        try {
+            $image = $this->imageService->setImageData(
+                "avatar-" . $request->getName()."."
+                . str_replace('image/', '', $request->getImageType()),
+                $request->getImageTmpName(),
+                $request->getImageType(),
+                $request->getImageSize());
+            $this->imageRepository->deleteAvatar($image->getImageName());
+            $this->accountRepository->setAvatar($image, $request->getName());
+            $this->imageRepository->uploadAvatar($image);
+
+        } catch (FileIsntImageException) {
+            return new JsonResponse(['success' => false]);
+        } catch (NotProperSizeException) {
+            return new JsonResponse(['success' => false]);
+        }
+        return new JsonResponse(['success' => true]);
     }
 
 }

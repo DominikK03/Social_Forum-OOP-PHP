@@ -14,6 +14,6 @@ use app\Util\TemplateRenderer;
 
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
-        return $renderer->renderHtml('post.html', $this->data);
+        return $renderer->renderPosts('post.html', $this->data);
     }
 }

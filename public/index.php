@@ -12,18 +12,21 @@ use app\Controller\PostPageController;
 use app\Core\DI\Container;
 use app\Core\HTTP\Request\Request;
 use app\Core\HTTP\Router;
-use app\MysqlClient;
 use app\Kernel;
+use app\MysqlClient;
+use app\MysqlClientInterface;
 use app\Repository\AccountRepository;
 use app\Repository\AuthRepository;
+use app\Repository\AuthRepositoryInterface;
 use app\Repository\ImageRepository;
 use app\Repository\PostRepository;
+use app\RequestValidator;
 use app\Service\AccountService;
 use app\Service\AuthService;
 use app\Service\ImageService;
-use app\Service\ImageValidator;
 use app\Service\PostService;
-use app\Service\RegistrationValidator;
+use app\Service\Validator\ImageValidator;
+use app\Service\Validator\RegistrationValidator;
 use app\Util\TemplateRenderer;
 
 $container = new Container();
@@ -34,6 +37,8 @@ $container->setConfig(MysqlClient::class,'config',[
     'user' => 'root',
     'pass' => 'root'
 ]);
+$container->bindInterface(MysqlClientInterface::class, MysqlClient::class);
+$container->bindInterface(AuthRepositoryInterface::class, AuthRepository::class);
 $container->register(
     Router::class,
     MysqlClient::class,
@@ -51,11 +56,13 @@ $container->register(
     ImageService::class,
     PostService::class,
     PostRepository::class,
-    ImageValidator::class
+    ImageValidator::class,
 )->build();
 
 
-$request = new Request($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_POST, $_GET, $_FILES);
+
+$request = new Request($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_POST, $_GET, $_FILES, $_SESSION);
+$requestValidator = new RequestValidator($request);
 
 $container->get(Router::class)->registerControllers(
         [
@@ -66,6 +73,6 @@ $container->get(Router::class)->registerControllers(
         ]
 );
 
-$kernel = new Kernel($container);
+$kernel = new Kernel($container, $requestValidator);
 $response = $kernel->handle($request);
 echo $response->getContent();

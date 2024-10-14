@@ -9,7 +9,6 @@ use PDOStatement;
 class MysqlClient implements MysqlClientInterface
 {
     private PDO $pdo;
-    private PDOStatement $statement;
 
     public function __construct(array $config)
     {

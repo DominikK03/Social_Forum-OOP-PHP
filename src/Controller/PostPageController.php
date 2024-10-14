@@ -19,15 +19,15 @@ use app\View\TeewtView;
     public function __construct(TemplateRenderer $renderer)
     {
         $this->renderer = $renderer;
-        $this->postView = new PostView([]);
-        $this->commentView = new CommentView([]);
-        $this->teewtView = new TeewtView($this->postView, $this->commentView);
-        $this->postPageView = new PostPageView($this->teewtView);
     }
 
 
     public function postPageView(PostRequest $request): ResponseInterface
     {
+        $this->postView = new PostView([]);
+        $this->commentView = new CommentView([]);
+        $this->teewtView = new TeewtView($this->postView, $this->commentView);
+        $this->postPageView = new PostPageView($this->teewtView);
         return new HtmlResponse($this->postPageView->renderWithRenderer($this->renderer));
 
     }
