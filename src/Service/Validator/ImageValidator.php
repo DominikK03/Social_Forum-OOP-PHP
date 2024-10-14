@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Service;
+namespace app\Service\Validator;
 
 use app\Util\StaticValidator;
 

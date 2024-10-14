@@ -18,11 +18,13 @@ use app\Core\DI\Exception\ClassNotFoundException;
         $this->bindings[$interface] = $class;
         return $this;
     }
+
     public function setConfig(string $class, string $parameterName, mixed $value): self
     {
         $this->config[$class][$parameterName] = $value;
         return $this;
     }
+
     public function register(string ...$classes): self
     {
         foreach ($classes as $class) {
@@ -59,40 +61,38 @@ use app\Core\DI\Exception\ClassNotFoundException;
 
     public function buildObject(string $class): mixed
     {
-        if (interface_exists($class) && isset($this->bindings[$class])){
+        if (interface_exists($class) && isset($this->bindings[$class])) {
             $class = $this->bindings[$class];
         }
 
-        $reflectionClass= new \ReflectionClass($class);
+        $reflectionClass = new \ReflectionClass($class);
         $constructor = $reflectionClass->getConstructor();
 
-        if (is_null($constructor))
-        {
-         return new $class;
+        if (is_null($constructor)) {
+            return new $class;
         }
 
         $parameters = $constructor->getParameters();
         $dependencies = [];
 
-        foreach($parameters as $parameter)
-        {
+        foreach ($parameters as $parameter) {
             $parameterType = $parameter->getType();
 
             if ($parameterType instanceof \ReflectionNamedType && !$parameterType->isBuiltin()) {
                 $dependencyClass = $parameterType->getName();
-                if ($this->has($dependencyClass)){
+                if ($this->has($dependencyClass)) {
                     $dependencies[] = $this->get($dependencyClass);
-                }else {
+                } else {
                     $dependencies[] = $this->buildObject($dependencyClass);
                 }
             } else {
                 $parameterName = $parameter->getName();
 
-                if (isset($this->config[$class][$parameterName])){
+                if (isset($this->config[$class][$parameterName])) {
                     $dependencies[] = $this->config[$class][$parameterName];
-                }elseif ($parameter->isOptional()) {
+                } elseif ($parameter->isOptional()) {
                     $dependencies[] = $parameter->getDefaultValue();
-                }else {
+                } else {
                     throw new \Exception("Cannot build");
                 }
             }

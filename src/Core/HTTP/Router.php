@@ -31,15 +31,15 @@ final class Router
 
                 foreach ($attributes as $attribute) {
                     $route = $attribute->newInstance();
-                    $this->register($route->method, $route->routePath, $controller, $method->getName());
+                    $this->register($route->method, $route->routePath, $controller, $method->getName(), $route->roles ?? []);
                 }
             }
         }
     }
 
-    public function register(string $requestMethod, string $path, string $controller, string $controllerMethod): self
+    public function register(string $requestMethod, string $path, string $controller, string $controllerMethod, array $roles = []): self
     {
-        $this->routes[$requestMethod][$path] = new RouteData($controller, $controllerMethod);
+        $this->routes[$requestMethod][$path] = new RouteData($controller, $controllerMethod, $roles);
 
         return $this;
     }

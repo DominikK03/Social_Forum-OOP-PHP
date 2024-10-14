@@ -14,7 +14,7 @@ use app\Util\TemplateRenderer;
 
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
-        return $renderer->renderHtml('loggedmainpage.html', [
+        return $renderer->renderHtml('loggedmainpage.html',[
             '{{Post}}' => $this->postView->renderWithRenderer($renderer)
         ]);
     }

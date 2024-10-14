@@ -35,12 +35,15 @@
             <input type="text" class="post-title-input form-control" id="postTitle" placeholder="Post title...">
             <small id="titleError" class="text-danger" style="display: none;">Title is required.</small>
             <textarea class="post-input form-control mt-2" id="postContent" rows="3" placeholder="What's on your mind?"></textarea>
+            <small id="contentInfo" class="text-secondary mt-1 mb-1" style="display: none;"></small>
+            <input type="text" class="post-link-input form-control" id="postLink" placeholder="Post link...">
             <input type="file" class="form-control post-photo mt-2" id="postImage" name="image" accept="image/*">
             <div class="text-end mt-2">
                 <div class="text-start mt-1">
                     <small class="text-muted">
                         File must be image (.jpg, .jpeg, .png, .gif)<br>
-                        Max size: 1 MB<br>
+                        Max image size: 1 MB<br>
+                        *Image and link are optional inputs<br>
                     </small>
                 </div>
                 <button type="submit" class="btn post-btn btn-primary" id="postButton" disabled>Post</button>

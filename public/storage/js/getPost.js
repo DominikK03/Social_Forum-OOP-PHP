@@ -10,6 +10,25 @@ $(document).ready(function () {
             $('#postButton').prop('disabled', false);
         }
     });
+    $('#postContent').on('input', function () {
+        let contentInfo = $('#contentInfo');
+        let content = $('#postContent').val();
+        let maxContentLength = 255;
+        let contentLength = content.length;
+        let currentContentLength = maxContentLength - contentLength;
+        if (content !== '') {
+            contentInfo.text("Maximum characters: " + currentContentLength).show();
+            if (currentContentLength < 0) {
+                contentInfo.replaceWith(contentInfo.text("Too many characters!").addClass('text-danger'));
+                $('#postButton').prop('disabled', true);
+            }else {
+                contentInfo.removeClass('text-danger');
+                $('#postButton').prop('disabled', false);
+            }
+        } else {
+            contentInfo.hide();
+        }
+    });
 
     $('#postForm').on('submit', function (e) {
         e.preventDefault();
@@ -17,6 +36,7 @@ $(document).ready(function () {
         var title = $('#postTitle').val().trim();
         var content = $('#postContent').val().trim();
         var image = $('#postImage')[0].files[0];
+        var link = $('#postLink').val().trim();
 
         if (title === '') {
             $('#titleError').show();
@@ -29,6 +49,9 @@ $(document).ready(function () {
 
         if (image) {
             formData.append('image', image);
+        }
+        if (link) {
+            formData.append('postLink', link)
         }
 
         $.ajax({

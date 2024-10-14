@@ -5,8 +5,9 @@ namespace app\Request;
 use AllowDynamicProperties;
 use app\Core\HTTP\Request\Request;
 
-#[AllowDynamicProperties] class PostRequest
+#[AllowDynamicProperties] class PostRequest extends Request implements RequestInterface
 {
+    private ?array $image;
     private ?string $imageTmpName;
     private ?string $imageType;
     private ?int $imageSize;
@@ -21,13 +22,25 @@ use app\Core\HTTP\Request\Request;
     {
         $this->request = $request;
     }
-    public function fromRequest(): void
+    public function fromPostRequest()
     {
+        $this->image = $this->request->getFiles();
         $this->imageTmpName = $this->request->getFileParam('image', 'tmp_name');
         $this->imageType = $this->request->getFileParam('image', 'type');
         $this->imageSize = $this->request->getFileParam('image', 'size');
         $this->postTitle = $this->request->getRequestParam('postTitle');
-        $this->postContent = $this->request->getRequestParam('postContent');
+        $this->postContent = $this->request->getRequestParam('postContent');    }
+
+    public function fromGetRequest()
+    {
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getImage(): ?array
+    {
+        return $this->image;
     }
 
     public function getImageTmpName(): string
@@ -68,5 +81,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->postLink;
     }
+
 
 }
