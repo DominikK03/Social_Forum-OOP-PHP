@@ -13,29 +13,6 @@ $(document).ready(function () {
         return re.test(password);
     }
 
-    $('#newPassword, #confirmPassword').on('input', function () {
-        const newPassword = $('#newPassword').val();
-        const confirmPassword = $('#confirmPassword').val();
-
-        if (validatePassword(newPassword)) {
-            $('#newPassword').removeClass('is-invalid').addClass('is-valid');
-            $('#newPassword').next('.invalid-feedback').hide();
-        } else {
-            $('#newPassword').removeClass('is-valid').addClass('is-invalid');
-            $('#newPassword').next('.invalid-feedback').show();
-        }
-
-        if (newPassword === confirmPassword && validatePassword(newPassword)) {
-            $('#confirmPassword').removeClass('is-invalid').addClass('is-valid');
-            $('#confirmPassword').next('.invalid-feedback').hide();
-            $('.save-password-btn').removeAttr('disabled');
-        } else {
-            $('#confirmPassword').removeClass('is-valid').addClass('is-invalid');
-            $('#confirmPassword').next('.invalid-feedback').show();
-            $('.save-password-btn').attr('disabled', 'disabled');
-        }
-    });
-
     $('#passwordChangeForm').on('submit', function (e) {
         e.preventDefault();
         const currentPassword = $('#currentPassword').val();

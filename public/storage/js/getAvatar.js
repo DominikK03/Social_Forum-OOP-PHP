@@ -13,6 +13,7 @@ $(document).ready(function(){
                 contentType: false,
                 processData: false,
                 success: function(response) {
+                    location.href = '/account'
                     location.reload();
                 },
                 error: function(xhr, status, error) {

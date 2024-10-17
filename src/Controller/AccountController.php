@@ -4,7 +4,6 @@ namespace app\Controller;
 
 use AllowDynamicProperties;
 use app\Core\HTTP\Attribute\Route;
-use app\Core\HTTP\Request\Request;
 use app\Core\HTTP\Response\HtmlResponse;
 use app\Core\HTTP\Response\JsonResponse;
 use app\Core\HTTP\Response\RedirectResponse;
@@ -13,8 +12,8 @@ use app\Enum\Role;
 use app\Exception\FileIsntImageException;
 use app\Exception\NotProperSizeException;
 use app\Exception\PasswordDoesntMatchException;
-use app\Repository\AccountRepository;
-use app\Repository\ImageRepository;
+use app\Repository\AccountRepositoryInterface;
+use app\Repository\ImageRepositoryInterface;
 use app\Request\AccountRequest;
 use app\Service\AccountService;
 use app\Service\AuthService;
@@ -25,12 +24,12 @@ use app\View\AccountView;
 #[AllowDynamicProperties] class AccountController
 {
     public function __construct(
-        TemplateRenderer  $renderer,
-        AuthService       $authService,
-        AccountService    $accountService,
-        AccountRepository $accountRepository,
-        ImageRepository   $imageRepository,
-        ImageService      $imageService)
+        TemplateRenderer           $renderer,
+        AuthService                $authService,
+        AccountService             $accountService,
+        AccountRepositoryInterface $accountRepository,
+        ImageRepositoryInterface   $imageRepository,
+        ImageService               $imageService)
     {
         $this->authService = $authService;
         $this->accountService = $accountService;
@@ -48,8 +47,7 @@ use app\View\AccountView;
                 '{{Username}}' => $request->getName(),
                 '{{Email}}' => $request->getEmail(),
                 '{{CreatedAt}}' => $request->getCreatedAt(),
-                '{{Avatar}}' =>
-                    '<img src="avatars/' . $this->accountRepository->getUserAvatar($request->getName()) . '" class="personal-avatar" alt="avatar">'
+                '{{Avatar}}' => $this->accountRepository->getUserAvatar($request->getName())
             ]);
             return new HtmlResponse($accountView->renderWithRenderer($this->renderer));
         } else {
@@ -84,15 +82,15 @@ use app\View\AccountView;
     public function setAvatarImage(AccountRequest $request): ResponseInterface
     {
         try {
-            $image = $this->imageService->setImageData(
-                "avatar-" . $request->getName()."."
+            $avatar = $this->imageService->setImageData(
+                "avatar-" . $request->getName() . "."
                 . str_replace('image/', '', $request->getImageType()),
                 $request->getImageTmpName(),
                 $request->getImageType(),
                 $request->getImageSize());
-            $this->imageRepository->deleteAvatar($image->getImageName());
-            $this->accountRepository->setAvatar($image, $request->getName());
-            $this->imageRepository->uploadAvatar($image);
+            $this->imageRepository->deleteAvatar($avatar->getImageName());
+            $this->accountRepository->setAvatar($avatar, $request->getName());
+            $this->imageRepository->uploadAvatar($avatar);
 
         } catch (FileIsntImageException) {
             return new JsonResponse(['success' => false]);

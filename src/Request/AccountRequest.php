@@ -34,8 +34,8 @@ use app\Core\HTTP\Request\Request;
     public function fromPostRequest()
     {
         if (!empty($this->request->getRequest())){
-            $this->password = $this->request->getRequestParam('currentPassword');
-            $this->newPassword = $this->request->getRequestParam('newPassword');
+            $this->password = htmlspecialchars($this->request->getRequestParam('currentPassword'));
+            $this->newPassword = htmlspecialchars($this->request->getRequestParam('newPassword'));
         }
        if (!empty($this->request->getFiles())){
            $this->image = $this->request->getFiles();

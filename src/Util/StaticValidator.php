@@ -3,6 +3,7 @@
 namespace app\Util;
 
 use AllowDynamicProperties;
+use app\Exception\EmptyCommentException;
 use app\Exception\FileIsntImageException;
 use app\Exception\NotProperSizeException;
 use app\Exception\PasswordDoesntMatchException;
@@ -77,5 +78,14 @@ use app\Exception\UsernameAlreadyExistsException;
         if(!($fileSize < 1000000)){
             throw new NotProperSizeException();
         }
+    }
+
+    public static function assertEmptyComment(string $commentContent)
+    {
+        if (empty($commentContent))
+        {
+            throw new EmptyCommentException();
+        }
+
     }
 }

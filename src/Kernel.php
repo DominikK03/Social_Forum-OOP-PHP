@@ -6,10 +6,13 @@ use AllowDynamicProperties;
 use app\Core\DI\Container;
 use app\Core\HTTP\Exception\RouteNotFoundException;
 use app\Core\HTTP\Request\Request;
+use app\Core\HTTP\Response\ErrorResponses\AccessDeniedResponse;
 use app\Core\HTTP\Response\ErrorResponses\PageNotFoundResponse;
 use app\Core\HTTP\Response\ResponseInterface;
 use app\Core\HTTP\Router;
+use app\Exception\AccessDeniedException;
 use app\Util\TemplateRenderer;
+use app\View\error\AccessDeniedView;
 use app\View\error\PageNotFoundView;
 use ReflectionMethod;
 
@@ -36,15 +39,18 @@ class Kernel
             $pageNotFoundView = new PageNotFoundView($this->container->get(TemplateRenderer::class));
             return new PageNotFoundResponse(
                 $pageNotFoundView->renderWithRenderer($this->container->get(TemplateRenderer::class)));
+        } catch (AccessDeniedException){
+            $accesDeniedView = new AccessDeniedView($this->container->get(TemplateRenderer::class));
+            return new AccessDeniedResponse(
+                $accesDeniedView->renderWithRenderer($this->container->get(TemplateRenderer::class)));
         }
     }
 
     private function authorize($routeData)
     {
-        if ($this->validator->hasAccessToRoute($routeData->getRoles())) {
-            return;
+        if (!$this->validator->hasAccessToRoute($routeData->getRoles())) {
+            throw new AccessDeniedException();
         }
-        die("Access denied: You do not have the required role to access this route.");
     }
 
 

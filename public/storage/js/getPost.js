@@ -15,10 +15,10 @@ $(document).ready(function () {
         let content = $('#postContent').val();
         let maxContentLength = 255;
         let contentLength = content.length;
-        let currentContentLength = maxContentLength - contentLength;
+        let remainingChars = maxContentLength - contentLength;
         if (content !== '') {
-            contentInfo.text("Maximum characters: " + currentContentLength).show();
-            if (currentContentLength < 0) {
+            contentInfo.text("Maximum characters: " + remainingChars).show();
+            if (remainingChars < 0) {
                 contentInfo.replaceWith(contentInfo.text("Too many characters!").addClass('text-danger'));
                 $('#postButton').prop('disabled', true);
             }else {
@@ -61,8 +61,7 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
-                console.log(response);
-                alert('Post submitted successfully!');
+                location.reload();
             },
             error: function (xhr, status, error) {
                 console.log(xhr.responseText);

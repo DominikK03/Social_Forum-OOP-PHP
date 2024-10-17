@@ -16,15 +16,22 @@ use app\Kernel;
 use app\MysqlClient;
 use app\MysqlClientInterface;
 use app\Repository\AccountRepository;
+use app\Repository\AccountRepositoryInterface;
 use app\Repository\AuthRepository;
 use app\Repository\AuthRepositoryInterface;
+use app\Repository\CommentRepository;
+use app\Repository\CommentRepositoryInterface;
 use app\Repository\ImageRepository;
+use app\Repository\ImageRepositoryInterface;
 use app\Repository\PostRepository;
+use app\Repository\PostRepositoryInterface;
 use app\RequestValidator;
 use app\Service\AccountService;
 use app\Service\AuthService;
+use app\Service\CommentService;
 use app\Service\ImageService;
 use app\Service\PostService;
+use app\Service\Validator\CommentValidator;
 use app\Service\Validator\ImageValidator;
 use app\Service\Validator\RegistrationValidator;
 use app\Util\TemplateRenderer;
@@ -39,6 +46,10 @@ $container->setConfig(MysqlClient::class,'config',[
 ]);
 $container->bindInterface(MysqlClientInterface::class, MysqlClient::class);
 $container->bindInterface(AuthRepositoryInterface::class, AuthRepository::class);
+$container->bindInterface(AccountRepositoryInterface::class, AccountRepository::class);
+$container->bindInterface(PostRepositoryInterface::class, PostRepository::class);
+$container->bindInterface(ImageRepositoryInterface::class, ImageRepository::class);
+$container->bindInterface(CommentRepositoryInterface::class, CommentRepository::class);
 $container->register(
     Router::class,
     MysqlClient::class,
@@ -57,6 +68,9 @@ $container->register(
     PostService::class,
     PostRepository::class,
     ImageValidator::class,
+    CommentValidator::class,
+    CommentService::class,
+    CommentRepository::class
 )->build();
 
 

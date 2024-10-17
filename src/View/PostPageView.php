@@ -15,7 +15,7 @@ use app\Util\TemplateRenderer;
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
         return $renderer->renderHtml('postpage.html', [
-            'Teewt' => $this->teewtView->renderWithRenderer($renderer)
+            '{{Teewt}}' => $this->teewtView->renderWithRenderer($renderer)
         ]);
     }
 

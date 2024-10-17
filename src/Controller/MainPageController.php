@@ -11,27 +11,26 @@ use app\Core\HTTP\Response\ResponseInterface;
 use app\Enum\Role;
 use app\Exception\FileIsntImageException;
 use app\Exception\NotProperSizeException;
-use app\Repository\ImageRepository;
-use app\Repository\PostRepository;
+use app\Repository\ImageRepositoryInterface;
+use app\Repository\PostRepositoryInterface;
 use app\Request\MainPageRequest;
 use app\Request\PostRequest;
 use app\Service\AuthService;
 use app\Service\ImageService;
 use app\Service\PostService;
 use app\Util\TemplateRenderer;
-use app\View\LoggedMainPageView;
 use app\View\MainPageView;
 use app\View\PostView;
 
 #[AllowDynamicProperties] class MainPageController
 {
     public function __construct(
-        TemplateRenderer $renderer,
-        AuthService      $authService,
-        ImageService     $imageService,
-        ImageRepository  $imageRepository,
-        PostService      $postService,
-        PostRepository   $postRepository)
+        TemplateRenderer         $renderer,
+        AuthService              $authService,
+        ImageService             $imageService,
+        ImageRepositoryInterface $imageRepository,
+        PostService              $postService,
+        PostRepositoryInterface  $postRepository)
     {
         $this->postService = $postService;
         $this->postRepository = $postRepository;
@@ -46,8 +45,8 @@ use app\View\PostView;
     {
         if ($this->authService->isLoggedIn()) {
             $postView = new PostView($this->postRepository->getPosts());
-            $loggedMainPageView = new LoggedMainPageView($postView);
-            return new HtmlResponse($loggedMainPageView->renderWithRenderer($this->renderer));
+            $mainPageView = new MainPageView($postView);
+            return new HtmlResponse($mainPageView->renderWithRenderer($this->renderer));
         } else {
             return new RedirectResponse('/login', []);
         }
@@ -61,7 +60,7 @@ use app\View\PostView;
             if (!empty($request->getImage())) {
                 $currentData = new \DateTime();
                 $imageName = $currentData->format('Ymdhi') . "."
-                    .str_replace('image/','', $request->getImageType());
+                    . str_replace('image/', '', $request->getImageType());
                 $this->imageRepository->uploadImage(
                     $image = $this->imageService->setImageData(
                         $imageName,

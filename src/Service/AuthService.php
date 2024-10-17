@@ -5,9 +5,6 @@ namespace app\Service;
 use AllowDynamicProperties;
 use app\Factory\UserFactory;
 use app\Model\User;
-use app\MysqlClient;
-use app\MysqlClientInterface;
-use app\Repository\AuthRepository;
 use app\Repository\AuthRepositoryInterface;
 use app\Service\Validator\RegistrationValidator;
 
