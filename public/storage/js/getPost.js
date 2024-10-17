@@ -61,7 +61,7 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
-                location.reload();
+                console.log(response)
             },
             error: function (xhr, status, error) {
                 console.log(xhr.responseText);

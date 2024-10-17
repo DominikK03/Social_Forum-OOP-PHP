@@ -23,20 +23,24 @@ use app\Core\HTTP\Request\Request;
         $this->request = $request;
     }
 
-    public function fromPostRequest()
+    public function fromRequest()
     {
-        $this->image = $this->request->getFiles();
-        $this->imageTmpName = $this->request->getFileParam('image', 'tmp_name');
-        $this->imageType = $this->request->getFileParam('image', 'type');
-        $this->imageSize = $this->request->getFileParam('image', 'size');
-        $this->postTitle = htmlspecialchars($this->request->getRequestParam('postTitle'));
-        $this->postContent = htmlspecialchars($this->request->getRequestParam('postContent'));
+        if ($this->request->getFiles() !== null) {
+            $this->image = $this->request->getFiles();
+            $this->imageTmpName = $this->request->getFileParam('image', 'tmp_name');
+            $this->imageType = $this->request->getFileParam('image', 'type');
+            $this->imageSize = $this->request->getFileParam('image', 'size');
+        }
+        if (!empty($this->request->getRequest())) {
+            $this->postTitle = htmlspecialchars($this->request->getRequestParam('postTitle'));
+            $this->postContent = htmlspecialchars($this->request->getRequestParam('postContent'));
+        }
+        if (!empty($this->request->getQuery())) {
+            $this->postID = $this->request->getQueryParams('postID');
+        }
+
     }
 
-    public function fromGetRequest()
-    {
-        $this->postID = $this->request->getQueryParams('postID');
-    }
 
     /**
      * @return array|null

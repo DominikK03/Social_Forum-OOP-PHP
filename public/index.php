@@ -74,7 +74,6 @@ $container->register(
 )->build();
 
 
-
 $request = new Request($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_POST, $_GET, $_FILES, $_SESSION);
 $requestValidator = new RequestValidator($request);
 

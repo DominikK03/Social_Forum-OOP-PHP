@@ -23,33 +23,24 @@ use app\Core\HTTP\Request\Request;
         $this->name = $this->request->getSessionParam('user', 'username');
     }
 
-    public function fromGetRequest()
+    public function fromRequest()
     {
         if ($this->request->getSession('user') !== null) {
             $this->email = $this->request->getSessionParam('user', 'email');
             $this->createdAt = $this->request->getSessionParam('user', 'createdAt')->format("Y-m-d H:i:s");
         }
-    }
-
-    public function fromPostRequest()
-    {
         if (!empty($this->request->getRequest())){
             $this->password = htmlspecialchars($this->request->getRequestParam('currentPassword'));
             $this->newPassword = htmlspecialchars($this->request->getRequestParam('newPassword'));
         }
-       if (!empty($this->request->getFiles())){
-           $this->image = $this->request->getFiles();
-           $this->imageTmpName = $this->request->getFileParam('image', 'tmp_name');
-           $this->imageType = $this->request->getFileParam('image', 'type');
-           $this->imageSize = $this->request->getFileParam('image', 'size');
-       }
-
+        if ($this->request->getFiles() !== null){
+            $this->image = $this->request->getFiles();
+            $this->imageTmpName = $this->request->getFileParam('image', 'tmp_name');
+            $this->imageType = $this->request->getFileParam('image', 'type');
+            $this->imageSize = $this->request->getFileParam('image', 'size');
+        }
     }
 
-    public function fromFILES()
-    {
-
-    }
 
     /**
      * @return string
