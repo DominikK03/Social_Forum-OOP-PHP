@@ -8,7 +8,7 @@ use app\Model\User;
 use app\MysqlClient;
 use app\MysqlClientInterface;
 
-#[AllowDynamicProperties] class AccountRepository
+#[AllowDynamicProperties] class AccountRepository implements AccountRepositoryInterface
 {
     public function __construct(MysqlClientInterface $client)
     {

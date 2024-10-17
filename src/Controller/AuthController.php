@@ -13,7 +13,7 @@ use app\Exception\EmailAlreadyExistsException;
 use app\Exception\PasswordDoesntMatchException;
 use app\Exception\UserDoesntExistException;
 use app\Exception\UsernameAlreadyExistsException;
-use app\Repository\AuthRepository;
+use app\Repository\AuthRepositoryInterface;
 use app\Request\LoginRequest;
 use app\Request\LogoutRequest;
 use app\Request\RegistrationRequest;
@@ -25,15 +25,14 @@ use app\View\RegisterView;
 #[AllowDynamicProperties] class AuthController
 {
     public function __construct(
-        TemplateRenderer $renderer,
-        AuthService      $service,
-        AuthRepository   $repository)
+        TemplateRenderer        $renderer,
+        AuthService             $service,
+        AuthRepositoryInterface $repository)
     {
         $this->service = $service;
         $this->repository = $repository;
         $this->renderer = $renderer;
-        $this->loginView = new LoginView();
-        $this->registerView = new RegisterView();
+
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -42,7 +41,8 @@ use app\View\RegisterView;
     #[Route('/register', 'GET')]
     public function registrationView(RegistrationRequest $request): ResponseInterface
     {
-        return new HtmlResponse($this->registerView->renderWithRenderer($this->renderer));
+        $registerView = new RegisterView();
+        return new HtmlResponse($registerView->renderWithRenderer($this->renderer));
     }
 
     #[Route('/register', 'POST')]
@@ -66,7 +66,8 @@ use app\View\RegisterView;
     #[Route('/login', 'GET')]
     public function loginView(LoginRequest $request): ResponseInterface
     {
-        return new HtmlResponse($this->loginView->renderWithRenderer($this->renderer));
+        $loginView = new LoginView();
+        return new HtmlResponse($loginView->renderWithRenderer($this->renderer));
     }
 
     #[Route('/login', 'POST')]

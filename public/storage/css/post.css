@@ -4,7 +4,33 @@
     padding: 15px;
     margin-bottom: 20px;
     background-color: #f9f9f9;
+    max-width: 100%; /* Ensure it doesn't go beyond the parent container */
+    word-wrap: break-word; /* Prevent long text from overflowing */
+    overflow-wrap: break-word;
 }
+
+.post-content {
+    font-size: 1em;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 15px;
+    word-wrap: break-word; /* Prevent long content from overflowing */
+    overflow-wrap: break-word;
+}
+
+.post-title {
+    font-size: 1.1em;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    word-wrap: break-word; /* Prevent long titles from overflowing */
+    overflow-wrap: break-word;
+}
+
+.post-link {
+    word-wrap: break-word; /* Ensure long links wrap correctly */
+    overflow-wrap: break-word;
+}
+
 
 .post-header h5 {
     margin: 0;
@@ -18,18 +44,6 @@
     color: #777;
 }
 
-.post-title {
-    font-size: 1.1em;
-    margin-top: 10px;
-    margin-bottom: 5px;
-}
-
-.post-content {
-    font-size: 1em;
-    line-height: 1.6;
-    color: #555;
-    margin-bottom: 15px;
-}
 
 .post-image {
     width: 100%;
@@ -42,6 +56,48 @@
     : center;
 }
 
-.post-container {
-    margin-top: 20px;
+.post-box {
+    border: 1px solid #e1e8ed;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #f5f8fa;
+    margin-bottom: 20px;
+}
+.post-input, .post-title-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 10px;
+    resize: none;
+    margin-bottom: 10px;
+}
+.post-title-input {
+    font-weight: bold;
+}
+.post-photo {
+    margin-bottom: 10px;
+}
+.post-btn {
+    background-color: #1DA1F2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+}
+.post-btn:hover {
+    background-color: #0c7abf;
+}
+
+.post {
+    padding: 15px;
+    border-bottom: 1px solid #e1e8ed;
+}
+.post h5 {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.post img {
+    max-width: 100%;
+    margin-top: 10px;
+    border-radius: 10px;
 }

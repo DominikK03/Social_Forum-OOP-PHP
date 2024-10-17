@@ -2,31 +2,34 @@
 
 namespace app\Model;
 
-use DateTime;
 use DateTimeInterface;
 use Ramsey\Uuid\UuidInterface;
 
 class Comment
 {
-    public function __construct(private UuidInterface     $commentId,
-                                private string            $content,
-                                private DateTimeInterface $createdAt,
-                                private User              $user)
+    public function __construct(
+        private UuidInterface     $commentId,
+        private string            $content,
+        private DateTimeInterface $createdAt,
+        private User              $user,
+        private string            $postId)
     {
     }
 
     /**
      * @return UuidInterface
      */
-    public function getCommentId(): UuidInterface
+    public
+    function getCommentId(): UuidInterface
     {
         return $this->commentId;
     }
 
     /**
-     * @return DateTime
+     * @return DateTimeInterface
      */
-    public function getCreatedAt(): DateTime
+    public
+    function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
     }
@@ -34,7 +37,8 @@ class Comment
     /**
      * @return string
      */
-    public function getContent(): string
+    public
+    function getContent(): string
     {
         return $this->content;
     }
@@ -42,8 +46,17 @@ class Comment
     /**
      * @return User
      */
-    public function getUser(): User
+    public
+    function getUser(): User
     {
         return $this->user;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostId(): string
+    {
+        return $this->postId;
     }
 }

@@ -12,27 +12,30 @@ use app\Core\HTTP\Request\Request;
     private ?string $imageType;
     private ?int $imageSize;
 
+    private string $postID;
     private string $postTitle;
     private ?string $postContent = null;
     private ?string $postLink = null;
-
 
 
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
+
     public function fromPostRequest()
     {
         $this->image = $this->request->getFiles();
         $this->imageTmpName = $this->request->getFileParam('image', 'tmp_name');
         $this->imageType = $this->request->getFileParam('image', 'type');
         $this->imageSize = $this->request->getFileParam('image', 'size');
-        $this->postTitle = $this->request->getRequestParam('postTitle');
-        $this->postContent = $this->request->getRequestParam('postContent');    }
+        $this->postTitle = htmlspecialchars($this->request->getRequestParam('postTitle'));
+        $this->postContent = htmlspecialchars($this->request->getRequestParam('postContent'));
+    }
 
     public function fromGetRequest()
     {
+        $this->postID = $this->request->getQueryParams('postID');
     }
 
     /**
@@ -82,5 +85,12 @@ use app\Core\HTTP\Request\Request;
         return $this->postLink;
     }
 
+    /**
+     * @return string
+     */
+    public function getPostID(): string
+    {
+        return $this->postID;
+    }
 
 }
