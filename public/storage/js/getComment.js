@@ -1,4 +1,18 @@
 $(document).ready(function () {
+    function getQueryParams() {
+        var params = {};
+        var queryString = window.location.search.substring(1);
+        var queries = queryString.split("&");
+
+        for (var i = 0; i < queries.length; i++) {
+            var pair = queries[i].split("=");
+            params[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || "");
+        }
+
+        return params;
+    }
+
+
     $('#commentInput').on('input', function () {
         let commentInfo = $('#commentInfo');
         let comment = $('#commentInput').val();
@@ -23,18 +37,21 @@ $(document).ready(function () {
     $('#commentForm').on('submit', function (e) {
         e.preventDefault();
 
+        var queryParams = getQueryParams();
+        var postID = queryParams['postID'];
         var comment = $('#commentInput').val().trim();
         var formData = new FormData();
         formData.append('comment', comment);
 
+
+
         $.ajax({
-            url: '/postcomment',
+            url: '/postcomment'+'?postID='+postID,
             type: 'POST',
             data: formData,
             processData: false,
             contentType: false,
             success: function (response) {
-                console.log(response)
                 if (response.success) {
                     location.reload();
                 } else {
@@ -42,6 +59,8 @@ $(document).ready(function () {
                         .text(response.message)
                         .show()
                         .addClass('text-danger');
+                    console.log(response)
+
                 }
             },
             error: function (xhr, status, error) {

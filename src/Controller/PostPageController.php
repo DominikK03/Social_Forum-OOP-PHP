@@ -21,7 +21,6 @@ use app\View\TeewtView;
 
 #[AllowDynamicProperties] class PostPageController
 {
-    private string $postID;
     public function __construct(
         TemplateRenderer $renderer,
         PostRepository $postRepository,
@@ -32,14 +31,12 @@ use app\View\TeewtView;
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
         $this->commentService = $commentService;
-
     }
 
 
     #[Route('/post', 'GET', [Role::user, Role::admin])]
     public function postPageView(CommentRequest $request): ResponseInterface
     {
-        $this->postID = $request->getPostID();
         $postView = new SinglePostView($this->postRepository->getPost($request->getPostID()));
         $commentView = new CommentView([]);
         $teewtView = new TeewtView($postView, $commentView);
@@ -57,7 +54,7 @@ use app\View\TeewtView;
                         ->setCommentData(
                             $request->getCommentContent(),
                             $request->getUsername(),
-                            $this->postID
+                            $request->getPostID()
                         ));
         }catch (EmptyCommentException $e){
             return new JsonResponse(['success' => false, 'message' => $e->getMessage()]);

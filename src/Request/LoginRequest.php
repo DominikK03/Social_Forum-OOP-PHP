@@ -16,7 +16,7 @@ use app\Core\HTTP\Request\Request;
 
     public function fromRequest()
     {
-        if (!empty($this->request->getRequest())){
+        if ($this->request->getMethod() == "POST"){
             $this->name = $this->request->getRequestParam('name');
             $this->password = $this->request->getRequestParam('password');
         }

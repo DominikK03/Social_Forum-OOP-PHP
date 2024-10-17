@@ -18,10 +18,13 @@ use app\Core\HTTP\Request\Request;
 
     public function fromRequest()
     {
-        $this->name = $this->request->getRequestParam('name');
-        $this->email = $this->request->getRequestParam('email');
-        $this->password = $this->request->getRequestParam('password');
-        $this->confirmPassword = $this->request->getRequestParam('confirmPassword');
+        if ($this->request->getMethod() == "POST"){
+            $this->name = $this->request->getRequestParam('name');
+            $this->email = $this->request->getRequestParam('email');
+            $this->password = $this->request->getRequestParam('password');
+            $this->confirmPassword = $this->request->getRequestParam('confirmPassword');
+        }
+
     }
 
 

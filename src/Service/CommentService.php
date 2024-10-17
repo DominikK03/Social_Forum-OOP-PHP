@@ -29,7 +29,6 @@ use app\Service\Validator\CommentValidator;
     {
         $this->commentValidator->validate($commentContent);
         $user = $this->authRepository->findByUsername($username);
-        var_dump($user);
         return $this->commentFactory->createComment($commentContent, $user, $postID);
     }
 }
