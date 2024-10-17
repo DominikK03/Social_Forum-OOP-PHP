@@ -27,14 +27,14 @@ $(document).ready(function () {
         var formData = new FormData();
         formData.append('comment', comment);
 
-
         $.ajax({
-            url: '/post',
+            url: '/postcomment',
             type: 'POST',
             data: formData,
             processData: false,
             contentType: false,
             success: function (response) {
+                console.log(response)
                 if (response.success) {
                     location.reload();
                 } else {

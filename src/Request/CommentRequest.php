@@ -18,17 +18,14 @@ use app\Core\HTTP\Request\Request;
         $this->request = $request;
     }
 
-    public function fromPostRequest()
-    {
-        $this->commentContent = htmlspecialchars($this->request->getRequestParam('commentInput'));
-    }
-
-    public function fromGetRequest()
+    public function fromRequest()
     {
         $this->postID = $this->request->getQueryParams('postID');
-        $this->username = $this->request->getSessionParam('user','username');
+        $this->username = $this->request->getSessionParam('user', 'username');
+        if (!empty($this->request->getRequest())) {
+            $this->commentContent = htmlspecialchars($this->request->getRequestParam('comment'));
+        }
     }
-
 
     /**
      * @return string
@@ -53,5 +50,4 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->username;
     }
-
 }

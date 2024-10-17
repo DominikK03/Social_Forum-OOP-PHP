@@ -22,9 +22,21 @@ use app\MysqlClientInterface;
                 'content' => $comment->getContent(),
                 'created_at' => $comment->getCreatedAt()->format('Y-m-d H:i:s'),
                 'user_id' => $comment->getUser()->getUserId(),
-                'post_id' => $comment->getPostId()
+                'post_id' => $comment->getCurrentPostId()
             ]);
         $this->client->pushWithoutResults($builder->getInsertQuery());
+    }
+
+    public function getPosts(): array
+    {
+        $builder = $this->client
+            ->createQueryBuilder()
+            ->select(
+                )
+            ->from('post')
+            ->join('user', 'post.user_id = user.user_id')
+            ->orderBy("post.created_at", "DESC");
+        return $this->client->getResults($builder->getSelectQuery());
     }
 
 }

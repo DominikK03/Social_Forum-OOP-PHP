@@ -66,10 +66,8 @@ class Kernel
 
                 $dedicatedRequest = new $dedicatedRequestClass($request);
 
-                if (method_exists($dedicatedRequest, 'fromPostRequest') && $_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $dedicatedRequest->fromPostRequest();
-                } elseif (method_exists($dedicatedRequest, 'fromGetRequest') && $_SERVER['REQUEST_METHOD'] === 'GET') {
-                    $dedicatedRequest->fromGetRequest();
+                if (method_exists($dedicatedRequest, 'fromRequest')) {
+                    $dedicatedRequest->fromRequest();
                 }
 
                 return $dedicatedRequest;

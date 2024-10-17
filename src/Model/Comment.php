@@ -12,7 +12,7 @@ class Comment
         private string            $content,
         private DateTimeInterface $createdAt,
         private User              $user,
-        private string            $postId)
+        private string            $currentPostID)
     {
     }
 
@@ -55,8 +55,8 @@ class Comment
     /**
      * @return string
      */
-    public function getPostId(): string
+    public function getCurrentPostId(): string
     {
-        return $this->postId;
+        return $this->currentPostID;
     }
 }

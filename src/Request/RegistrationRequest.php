@@ -16,16 +16,14 @@ use app\Core\HTTP\Request\Request;
         $this->request = $request;
     }
 
-    public function fromPostRequest()
+    public function fromRequest()
     {
         $this->name = $this->request->getRequestParam('name');
         $this->email = $this->request->getRequestParam('email');
         $this->password = $this->request->getRequestParam('password');
-        $this->confirmPassword = $this->request->getRequestParam('confirmPassword');    }
-
-    public function fromGetRequest()
-    {
+        $this->confirmPassword = $this->request->getRequestParam('confirmPassword');
     }
+
 
 
     /**

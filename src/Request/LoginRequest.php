@@ -13,14 +13,13 @@ use app\Core\HTTP\Request\Request;
     {
         $this->request = $request;
     }
-    public function fromPostRequest()
-    {
-        $this->name = $this->request->getRequestParam('name');
-        $this->password = $this->request->getRequestParam('password');
-    }
 
-    public function fromGetRequest()
+    public function fromRequest()
     {
+        if (!empty($this->request->getRequest())){
+            $this->name = $this->request->getRequestParam('name');
+            $this->password = $this->request->getRequestParam('password');
+        }
     }
 
 
