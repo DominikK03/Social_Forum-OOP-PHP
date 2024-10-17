@@ -12,7 +12,6 @@ use app\Core\HTTP\Request\Request;
     private string $commentContent;
     private string $username;
 
-
     public function __construct(Request $request)
     {
         $this->request = $request;
@@ -20,9 +19,10 @@ use app\Core\HTTP\Request\Request;
 
     public function fromRequest()
     {
-        $this->postID = $this->request->getQueryParams('postID');
         $this->username = $this->request->getSessionParam('user', 'username');
-        if (!empty($this->request->getRequest())) {
+        $this->postID = $this->request->getQueryParams('postID');
+
+        if ($this->request->getMethod() == "POST") {
             $this->commentContent = htmlspecialchars($this->request->getRequestParam('comment'));
         }
     }

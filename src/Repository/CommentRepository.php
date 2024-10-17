@@ -18,12 +18,13 @@ use app\MysqlClientInterface;
         $builder = $this->client
             ->createQueryBuilder()
             ->insert('comment', [
-                'comment_id', $comment->getCommentId(),
+                'comment_id' => $comment->getCommentId()->toString(),
                 'content' => $comment->getContent(),
                 'created_at' => $comment->getCreatedAt()->format('Y-m-d H:i:s'),
                 'user_id' => $comment->getUser()->getUserId(),
                 'post_id' => $comment->getCurrentPostId()
             ]);
+        var_dump($builder->getInsertQuery());
         $this->client->pushWithoutResults($builder->getInsertQuery());
     }
 
