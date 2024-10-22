@@ -7,12 +7,10 @@ use app\Core\HTTP\Request\Request;
 
 #[AllowDynamicProperties] class AccountRequest extends Request implements RequestInterface
 {
-    private string $name;
-    private string $password;
-    private string $newPassword;
-    private string $email;
-    private string $createdAt;
-    private array $image;
+    private array $userSession;
+    private ?string $currentPassword;
+    private string $deletePassword;
+    private ?string $newPassword;
     private string $imageTmpName;
     private string $imageType;
     private string $imageSize;
@@ -25,36 +23,30 @@ use app\Core\HTTP\Request\Request;
     public function fromRequest()
     {
         if ($this->request->getSession('user') !== null) {
-            $this->name = $this->request->getSessionParam('user', 'username');
-            $this->email = $this->request->getSessionParam('user', 'email');
-            $this->createdAt = $this->request->getSessionParam('user', 'createdAt')->format("Y-m-d H:i:s");
+            $this->userSession = $this->request->getSession('user');
         }
-        if ($this->request->getMethod() == "POST"){
-            if ($this->request->getFiles()!==null){
+        if ($this->request->getMethod() == "POST") {
+            if (!empty($this->request->getFiles())) {
                 $this->imageTmpName = $this->request->getFileParam('image', 'tmp_name');
                 $this->imageType = $this->request->getFileParam('image', 'type');
                 $this->imageSize = $this->request->getFileParam('image', 'size');
             }
-            $this->password = htmlspecialchars($this->request->getRequestParam('currentPassword'));
-            $this->newPassword = htmlspecialchars($this->request->getRequestParam('newPassword'));
+            if (!empty($this->request->getRequestParam('deletePassword'))) {
+                $this->deletePassword = htmlspecialchars($this->request->getRequestParam('deletePassword'));
+            }
+            if (!is_null($this->request->getRequestParam('currentPassword'))) {
+                $this->currentPassword = htmlspecialchars($this->request->getRequestParam('currentPassword'));
+                $this->newPassword = htmlspecialchars($this->request->getRequestParam('newPassword'));
+            }
         }
     }
 
-
     /**
      * @return string
      */
-    public function getName(): string
+    public function getCurrentPassword(): string
     {
-        return $this->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
+        return $this->currentPassword;
     }
 
     /**
@@ -65,21 +57,6 @@ use app\Core\HTTP\Request\Request;
         return $this->newPassword;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreatedAt(): string
-    {
-        return $this->createdAt;
-    }
 
     /**
      * @return array
@@ -113,5 +90,19 @@ use app\Core\HTTP\Request\Request;
         return $this->imageType;
     }
 
+    /**
+     * @return string
+     */
+    public function getDeletePassword(): string
+    {
+        return $this->deletePassword;
+    }
 
+    /**
+     * @return array
+     */
+    public function getUserSession(): array
+    {
+        return $this->userSession;
+    }
 }

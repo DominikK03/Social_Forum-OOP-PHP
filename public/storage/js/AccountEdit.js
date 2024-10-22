@@ -13,38 +13,80 @@ $(document).ready(function () {
         return re.test(password);
     }
 
-    $('#passwordChangeForm').on('submit', function (e) {
-        e.preventDefault();
-        const currentPassword = $('#currentPassword').val();
+    $('#newPassword, #confirmPassword').on('input', function () {
         const newPassword = $('#newPassword').val();
         const confirmPassword = $('#confirmPassword').val();
 
+        if (validatePassword(newPassword)) {
+            $('#newPassword').removeClass('is-invalid').addClass('is-valid');
+            $('#newPassword').next('.invalid-feedback').hide();
+        } else {
+            $('#newPassword').removeClass('is-valid').addClass('is-invalid');
+            $('#newPassword').next('.invalid-feedback').show();
+        }
 
-        if (newPassword !== confirmPassword) {
-            $('#confirmPassword').addClass('is-invalid');
+        if (newPassword === confirmPassword && validatePassword(newPassword)) {
+            $('#confirmPassword').removeClass('is-invalid').addClass('is-valid');
+            $('#confirmPassword').next('.invalid-feedback').hide();
+            $('.save-password-btn').removeAttr('disabled');
+        } else {
+            $('#confirmPassword').removeClass('is-valid').addClass('is-invalid');
             $('#confirmPassword').next('.invalid-feedback').show();
+            $('.save-password-btn').attr('disabled', 'disabled');
+        }
+    });
+    $('#avatarImage').on('change', function () {
+        var formData = new FormData();
+        var file = $('#avatarImage')[0].files[0];
+
+        if (file) {
+            formData.append('image', file);
+
+            $.ajax({
+                url: '/account/postAvatar',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    console.log(response);
+                    location.href = '/account'
+                    location.reload(true);
+                },
+                error: function (xhr, status, error) {
+                    alert('Upload failed: ' + error);
+                }
+            });
+        }
+    });
+
+    $('.delete-account-btn').click(function () {
+        $('#deleteAccountModal').modal('show');
+    });
+
+    $('.confirm-delete-account-btn').click(function () {
+        var deletePassword = $('#deletePassword').val();
+
+        if (deletePassword === '') {
+            $('.invalid-password').text('Please enter your password.').removeAttr('hidden').show();
             return;
         }
 
         var formData = {
-            currentPassword: currentPassword,
-            newPassword: newPassword,
-            confirmPassword: confirmPassword
+          deletePassword : deletePassword
         };
 
         $.ajax({
-            url: '/passwordChange',
+            url: '/account/deleteAccount',
             type: 'POST',
             data: formData,
             success: function (response) {
+                console.log(response)
                 if (response.success) {
-                    $('#password-form').addClass('d-none');
-                    $(".success-password").removeAttr('hidden').show().addClass('text-success');
-
+                   location.href = '/login';
+                   location.reload();
                 } else {
-                    if (response.message === "Invalid password") {
-                        $(".invalid-password").text("Invalid password.").show().addClass('text-danger');
-                    }
+                    $('.invalid-password').text('Invalid password.').removeAttr('hidden').show();
                 }
             },
             error: function (xhr, status, error) {
@@ -52,4 +94,51 @@ $(document).ready(function () {
             }
         });
     });
+
+    $('#deleteAccountModal').on('hidden.bs.modal', function () {
+        $('#deletePassword').val('');
+        $('.invalid-password').hide();
+    });
+
+
+$('#passwordChangeForm').on('submit', function (e) {
+    e.preventDefault();
+    const currentPassword = $('#currentPassword').val();
+    const newPassword = $('#newPassword').val();
+    const confirmPassword = $('#confirmPassword').val();
+
+
+    if (newPassword !== confirmPassword) {
+        $('#confirmPassword').addClass('is-invalid');
+        $('#confirmPassword').next('.invalid-feedback').show();
+        return;
+    }
+
+    var formData = {
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword
+    };
+
+    $.ajax({
+        url: '/account/passwordChange',
+        type: 'POST',
+        data: formData,
+        success: function (response) {
+            if (response.success) {
+                $('#password-form').addClass('d-none');
+                $(".success-password").removeAttr('hidden').show().addClass('text-success');
+
+            } else {
+                if (response.message === "Invalid password") {
+                    $(".invalid-password").text("Invalid password.").show().addClass('text-danger');
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            alert('An error occurred: ' + error);
+        }
+    });
 });
+})
+;

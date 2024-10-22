@@ -8,6 +8,7 @@ use app\Exception\FileIsntImageException;
 use app\Exception\NotProperSizeException;
 use app\Exception\PasswordDoesntMatchException;
 use app\Exception\UserDoesntExistException;
+use app\Exception\WrongPasswordException;
 use app\MysqlClient;
 use app\Exception\EmailAlreadyExistsException;
 use app\Exception\UsernameAlreadyExistsException;
@@ -86,6 +87,12 @@ use app\Exception\UsernameAlreadyExistsException;
         {
             throw new EmptyCommentException();
         }
-
+    }
+    public static function assertConfirmPasswordDelete(string $deletePassword, string $passwordHash)
+    {
+        if (!password_verify($deletePassword, $passwordHash))
+        {
+            throw new WrongPasswordException();
+        }
     }
 }

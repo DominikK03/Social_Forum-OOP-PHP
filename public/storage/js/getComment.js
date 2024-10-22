@@ -52,6 +52,7 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
+                console.log(response)
                 if (response.success) {
                     location.reload();
                 } else {
@@ -59,8 +60,6 @@ $(document).ready(function () {
                         .text(response.message)
                         .show()
                         .addClass('text-danger');
-                    console.log(response)
-
                 }
             },
             error: function (xhr, status, error) {

@@ -8,7 +8,7 @@ use DateTime;
 class ImageFactory
 {
 
-    public function createImage(
+    public function fromUserInput(
         string $imageName,
         string $imageTmpName,
         string $imageType,

@@ -9,7 +9,7 @@ use Ramsey\Uuid\Uuid;
 
 class CommentFactory
 {
-    public function createComment(string $content, User $user, string $postID): Comment
+    public function fromUserInput(string $content, User $user, string $postID): Comment
     {
         return new Comment(Uuid::uuid4(), $content, new DateTime(), $user, $postID);
     }

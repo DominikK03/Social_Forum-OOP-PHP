@@ -17,7 +17,7 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 if (response.success) {
-                    window.location.href = '/';
+                    location.href = '/';
                 } else {
                     $('.invalid-feedback').show();
                 }

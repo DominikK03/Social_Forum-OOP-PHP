@@ -49,8 +49,12 @@ class MysqlClient implements MysqlClientInterface
     {
         $statement = $this->pdo->prepare($query->showStatement());
         $statement->execute();
-
-
+    }
+    public function rowCount(Query $query) : int
+    {
+        $statement = $this->pdo->prepare($query->showStatement());
+        $statement->execute();
+        return $statement->rowCount();
     }
 
 
