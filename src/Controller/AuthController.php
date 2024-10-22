@@ -13,24 +13,22 @@ use app\Exception\EmailAlreadyExistsException;
 use app\Exception\PasswordDoesntMatchException;
 use app\Exception\UserDoesntExistException;
 use app\Exception\UsernameAlreadyExistsException;
-use app\Repository\AuthRepositoryInterface;
 use app\Request\LoginRequest;
 use app\Request\LogoutRequest;
 use app\Request\RegistrationRequest;
-use app\Service\AuthService;
+use app\Service\Auth\AuthService;
 use app\Util\TemplateRenderer;
-use app\View\LoginView;
-use app\View\RegisterView;
+use app\View\Authentication\LoginView;
+use app\View\Authentication\RegisterView;
 
 #[AllowDynamicProperties] class AuthController
 {
     public function __construct(
         TemplateRenderer        $renderer,
-        AuthService             $service,
-        AuthRepositoryInterface $repository)
+        AuthService             $authService,
+        )
     {
-        $this->service = $service;
-        $this->repository = $repository;
+        $this->authService = $authService;
         $this->renderer = $renderer;
 
         if (session_status() === PHP_SESSION_NONE) {
@@ -49,12 +47,11 @@ use app\View\RegisterView;
     public function handleRegistration(RegistrationRequest $request): ResponseInterface
     {
         try {
-            $this->repository->registerUser(
-                $this->service->setUserData(
+                $this->authService->createUser(
                     $request->getName(),
                     $request->getEmail(),
                     $request->getPassword()
-                ));
+                );
         } catch (EmailAlreadyExistsException) {
             return new JsonResponse(['success' => false, 'message' => 'E-mail already exists']);
         } catch (UsernameAlreadyExistsException) {
@@ -74,7 +71,10 @@ use app\View\RegisterView;
     public function handleLogin(LoginRequest $request): ResponseInterface
     {
         try {
-            $this->service->loginUser($request->getName(), $request->getPassword());
+            $this->authService->loginUser(
+                $request->getName(),
+                $request->getPassword()
+            );
         } catch (UserDoesntExistException $e) {
             return new JsonResponse(['success' => false, 'message' => $e->getMessage()]);
         } catch (PasswordDoesntMatchException $e) {
@@ -86,7 +86,7 @@ use app\View\RegisterView;
     #[Route('/logout', 'GET', [Role::user, Role::admin])]
     public function logout(LogoutRequest $request): ResponseInterface
     {
-        $this->service->logoutUser();
+        $this->authService->logoutUser();
         return new RedirectResponse('/login', ['loginStatus' => 'logout']);
     }
 

@@ -38,6 +38,9 @@ use app\Core\HTTP\Request\Request;
         if (!empty($this->request->getQuery())) {
             $this->postID = $this->request->getQueryParams('postID');
         }
+        if (!is_null($this->request->getRequestParam('postLink'))){
+            $this->postLink = htmlspecialchars($this->request->getRequestParam('postLink'));
+        }
 
     }
 

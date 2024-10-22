@@ -3,8 +3,7 @@
 namespace app\Service\Validator;
 
 use AllowDynamicProperties;
-use app\Repository\AuthRepository;
-use app\Repository\AuthRepositoryInterface;
+use app\Repository\Auth\AuthRepositoryInterface;
 
 #[AllowDynamicProperties] class RegistrationValidator
 {

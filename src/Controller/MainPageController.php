@@ -11,16 +11,17 @@ use app\Core\HTTP\Response\ResponseInterface;
 use app\Enum\Role;
 use app\Exception\FileIsntImageException;
 use app\Exception\NotProperSizeException;
-use app\Repository\ImageRepositoryInterface;
-use app\Repository\PostRepositoryInterface;
+use app\Repository\Image\ImageRepositoryInterface;
+use app\Repository\Post\PostRepositoryInterface;
 use app\Request\MainPageRequest;
 use app\Request\PostRequest;
-use app\Service\AuthService;
-use app\Service\ImageService;
-use app\Service\PostService;
+use app\Service\Auth\AuthService;
+use app\Service\Image\ImageService;
+use app\Service\Post\PostService;
 use app\Util\TemplateRenderer;
-use app\View\MainPageView;
-use app\View\PostView;
+use app\View\MainPage\MainPageView;
+use app\View\NavbarView;
+use app\View\Post\PostView;
 
 #[AllowDynamicProperties] class MainPageController
 {
@@ -44,8 +45,9 @@ use app\View\PostView;
     public function MainPage(MainPageRequest $request): ResponseInterface
     {
         if ($this->authService->isLoggedIn()) {
-            $postView = new PostView($this->postRepository->getPosts());
-            $mainPageView = new MainPageView($postView);
+            $navbarView = new NavbarView();
+            $postView = new PostView($this->postService->getPostsWithCommentRow());
+            $mainPageView = new MainPageView($postView, $navbarView);
             return new HtmlResponse($mainPageView->renderWithRenderer($this->renderer));
         } else {
             return new RedirectResponse('/login', []);
@@ -61,26 +63,23 @@ use app\View\PostView;
                 $currentData = new \DateTime();
                 $imageName = $currentData->format('Ymdhi') . "."
                     . str_replace('image/', '', $request->getImageType());
-                $this->imageRepository->uploadImage(
-                    $image = $this->imageService->setImageData(
+                $this->postService->createPost(
+                    $request->getPostTitle(),
+                    $request->getPostContent(),
+                    $request->getPostLink(),
+                    $image = $this->imageService->createImage(
                         $imageName,
                         $request->getImageTmpName(),
                         $request->getImageType(),
-                        $request->getImageSize())
+                        $request->getImageSize()
+                    )
                 );
-                $this->postRepository->insertPost(
-                    $this->postService->setPostData(
-                        $request->getPostTitle(),
-                        $request->getPostContent(),
-                        $request->getPostLink(),
-                        $image)
-                );
+                $this->imageService->uploadPostImage($image);
             } else {
-                $this->postRepository->insertPost(
-                    $this->postService->setPostData(
-                        $request->getPostTitle(),
-                        $request->getPostContent(),
-                        $request->getPostLink())
+                $this->postService->createPost(
+                    $request->getPostTitle(),
+                    $request->getPostContent(),
+                    $request->getPostLink()
                 );
             }
         } catch (FileIsntImageException) {

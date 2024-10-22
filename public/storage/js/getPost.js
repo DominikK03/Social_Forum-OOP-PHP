@@ -1,4 +1,9 @@
 $(document).ready(function () {
+
+    function validateLink(postLink){
+        const re = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+        return re.test(String(postLink).toLowerCase());
+    }
     $('#postTitle').on('input', function () {
         var title = $(this).val().trim();
 
@@ -27,6 +32,19 @@ $(document).ready(function () {
             }
         } else {
             contentInfo.hide();
+        }
+    });
+    $('#postLink').on('input', function () {
+        const postLink = $('#postLink').val();
+        let invalidLink = $('#invalid-postLink');
+        if (validateLink(postLink) || postLink === ''){
+            invalidLink.removeClass('text-danger').text('Invalid Link').hide();
+            $('#postButton').prop('disabled', false);
+
+        } else {
+            invalidLink.addClass('text-danger').text('Invalid Link').show();
+            $('#postButton').prop('disabled', true);
+
         }
     });
 
@@ -61,7 +79,7 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
-                console.log(response)
+                window.location.reload();
             },
             error: function (xhr, status, error) {
                 console.log(xhr.responseText);

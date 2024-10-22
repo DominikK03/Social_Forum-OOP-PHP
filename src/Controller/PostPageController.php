@@ -9,38 +9,41 @@ use app\Core\HTTP\Response\JsonResponse;
 use app\Core\HTTP\Response\ResponseInterface;
 use app\Enum\Role;
 use app\Exception\EmptyCommentException;
-use app\Repository\CommentRepositoryInterface;
-use app\Repository\PostRepository;
+use app\Repository\Comment\CommentRepositoryInterface;
+use app\Repository\Post\PostRepository;
 use app\Request\CommentRequest;
-use app\Service\CommentService;
+use app\Service\Comment\CommentService;
 use app\Util\TemplateRenderer;
-use app\View\CommentView;
-use app\View\PostPageView;
-use app\View\SinglePostView;
-use app\View\TeewtView;
+use app\View\NavbarView;
+use app\View\Post\CommentView;
+use app\View\Post\PostPageView;
+use app\View\Post\SinglePostView;
+use app\View\Post\TeewtView;
 
 #[AllowDynamicProperties] class PostPageController
 {
     public function __construct(
         TemplateRenderer $renderer,
         PostRepository $postRepository,
-        CommentRepositoryInterface $commentRepository,
-        CommentService $commentService)
+        CommentService $commentService,
+        CommentRepositoryInterface $commentRepository
+    )
     {
         $this->renderer = $renderer;
         $this->postRepository = $postRepository;
-        $this->commentRepository = $commentRepository;
         $this->commentService = $commentService;
+        $this->commentRepository = $commentRepository;
     }
 
 
     #[Route('/post', 'GET', [Role::user, Role::admin])]
     public function postPageView(CommentRequest $request): ResponseInterface
     {
+        $navbarView = new NavbarView();
         $postView = new SinglePostView($this->postRepository->getPost($request->getPostID()));
-        $commentView = new CommentView([]);
+        $commentView = new CommentView($this->commentRepository->getComments($request->getPostID()));
         $teewtView = new TeewtView($postView, $commentView);
-        $postPageView = new PostPageView($teewtView);
+        $postPageView = new PostPageView($teewtView, $navbarView);
         return new HtmlResponse($postPageView->renderWithRenderer($this->renderer));
     }
 
@@ -48,14 +51,11 @@ use app\View\TeewtView;
     public function handleComment(CommentRequest $request) : ResponseInterface
     {
         try {
-            $this->commentRepository
-                ->insertComment(
-                    $this->commentService
-                        ->setCommentData(
-                            $request->getCommentContent(),
-                            $request->getUsername(),
-                            $request->getPostID()
-                        ));
+            $this->commentService->createComment(
+                $request->getCommentContent(),
+                $request->getUsername(),
+                $request->getPostID()
+            );
         }catch (EmptyCommentException $e){
             return new JsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }catch (\Exception $exception){

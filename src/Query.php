@@ -74,7 +74,7 @@ class Query
     }
 
     /**
-     * @param array $groupBys
+     * @param string $field
      */
     public function addGroupBy(string $field): void
     {

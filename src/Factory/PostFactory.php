@@ -10,7 +10,7 @@ use Ramsey\Uuid\Uuid;
 
 class PostFactory
 {
-    public function createPost(
+    public function fromUserInput(
         string  $title,
         User    $user,
         Image   $image = null,
