@@ -38,9 +38,9 @@ use app\Service\Validator\ImageValidator;
         $this->imageRepository->uploadImage($image);
     }
 
-    public function updateAvatar(Image $image, string $avatarName)
+    public function updateAvatar(Image $image)
     {
-        $this->imageRepository->deleteAvatar($avatarName);
+        $this->imageRepository->deleteAvatar($image->getImageName());
         $this->imageRepository->uploadAvatar($image);
     }
 

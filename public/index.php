@@ -6,6 +6,7 @@ const STORAGE_IMAGES_PATH = '../public/storage/images';
 
 
 use app\Controller\AccountController;
+use app\Controller\AdminPanelController;
 use app\Controller\AuthController;
 use app\Controller\MainPageController;
 use app\Controller\PostPageController;
@@ -57,6 +58,7 @@ $container->register(
     MainPageController::class,
     AccountController::class,
     PostPageController::class,
+    AdminPanelController::class,
     AccountService::class,
     AccountRepository::class,
     AuthController::class,
@@ -82,6 +84,7 @@ $container->get(Router::class)->registerControllers(
             MainPageController::class,
             AuthController::class,
             AccountController::class,
+            AdminPanelController::class,
             PostPageController::class
         ]
 );

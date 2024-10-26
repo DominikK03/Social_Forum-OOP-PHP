@@ -15,6 +15,6 @@ use app\View\ViewInterface;
 
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
-        return $renderer->renderPosts('post.html', $this->data);
+        return $renderer->renderPosts('post/post.html', $this->data);
     }
 }

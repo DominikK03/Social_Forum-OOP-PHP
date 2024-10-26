@@ -17,7 +17,7 @@ use app\View\ViewInterface;
 
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
-        return $renderer->renderHtml('teewt.html', [
+        return $renderer->renderHtml('post/teewt.html', [
             '{{PostView}}' => $this->singlePostView->renderWithRenderer($renderer),
             '{{CommentView}}' => $this->commentView->renderWithRenderer($renderer)
         ]);

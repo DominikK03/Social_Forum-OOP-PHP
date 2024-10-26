@@ -10,6 +10,6 @@ class LoginView implements ViewInterface
 
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
-        return $renderer->renderHtml('loginpage.html');
+        return $renderer->renderHtml('auth/loginpage.html');
     }
 }

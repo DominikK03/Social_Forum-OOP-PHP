@@ -71,19 +71,20 @@ use app\View\Authentication\RegisterView;
     public function handleLogin(LoginRequest $request): ResponseInterface
     {
         try {
-            $this->authService->loginUser(
+            $loginUser = $this->authService->loginUser(
                 $request->getName(),
                 $request->getPassword()
             );
+            return new JsonResponse(['success' => true, 'role' => $loginUser->getRole()->name]);
+
         } catch (UserDoesntExistException $e) {
             return new JsonResponse(['success' => false, 'message' => $e->getMessage()]);
         } catch (PasswordDoesntMatchException $e) {
             return new JsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
-        return new JsonResponse(['success' => true]);
     }
 
-    #[Route('/logout', 'GET', [Role::user, Role::admin])]
+    #[Route('/logout', 'GET', [Role::user, Role::admin, Role::master])]
     public function logout(LogoutRequest $request): ResponseInterface
     {
         $this->authService->logoutUser();

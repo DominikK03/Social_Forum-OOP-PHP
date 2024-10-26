@@ -15,6 +15,6 @@ use app\View\ViewInterface;
 
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
-        return $renderer->renderHtml('accountinfo.html', $this->data);
+        return $renderer->renderHtml('account/accountinfo.html', $this->data);
     }
 }
