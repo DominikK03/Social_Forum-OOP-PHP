@@ -59,7 +59,8 @@ $(document).ready(function () {
                     $("#comment-invalid-feedback")
                         .text(response.message)
                         .show()
-                        .addClass('text-danger');
+                        .addClass('text-danger')
+                        .delay(3000).fadeOut();
                 }
             },
             error: function (xhr, status, error) {

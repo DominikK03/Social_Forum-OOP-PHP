@@ -1,12 +1,11 @@
 $(document).ready(function () {
-
-    function validateLink(postLink){
+    function validateLink(postLink) {
         const re = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
         return re.test(String(postLink).toLowerCase());
     }
-    $('#postTitle').on('input', function () {
-        var title = $(this).val().trim();
 
+    $('#postTitle').on('input', function () {
+        const title = $(this).val().trim();
         if (title === '') {
             $('#titleError').show();
             $('#postButton').prop('disabled', true);
@@ -15,18 +14,20 @@ $(document).ready(function () {
             $('#postButton').prop('disabled', false);
         }
     });
+
     $('#postContent').on('input', function () {
-        let contentInfo = $('#contentInfo');
-        let content = $('#postContent').val();
-        let maxContentLength = 255;
-        let contentLength = content.length;
-        let remainingChars = maxContentLength - contentLength;
+        const contentInfo = $('#contentInfo');
+        const content = $(this).val();
+        const maxContentLength = 255;
+        const contentLength = content.length;
+        const remainingChars = maxContentLength - contentLength;
+
         if (content !== '') {
             contentInfo.text("Maximum characters: " + remainingChars).show();
             if (remainingChars < 0) {
-                contentInfo.replaceWith(contentInfo.text("Too many characters!").addClass('text-danger'));
+                contentInfo.text("Too many characters!").addClass('text-danger');
                 $('#postButton').prop('disabled', true);
-            }else {
+            } else {
                 contentInfo.removeClass('text-danger');
                 $('#postButton').prop('disabled', false);
             }
@@ -34,42 +35,40 @@ $(document).ready(function () {
             contentInfo.hide();
         }
     });
+
     $('#postLink').on('input', function () {
-        const postLink = $('#postLink').val();
-        let invalidLink = $('#invalid-postLink');
-        if (validateLink(postLink) || postLink === ''){
+        const postLink = $(this).val();
+        const invalidLink = $('#invalid-postLink');
+
+        if (validateLink(postLink) || postLink === '') {
             invalidLink.removeClass('text-danger').text('Invalid Link').hide();
             $('#postButton').prop('disabled', false);
-
         } else {
             invalidLink.addClass('text-danger').text('Invalid Link').show();
             $('#postButton').prop('disabled', true);
-
         }
     });
 
     $('#postForm').on('submit', function (e) {
         e.preventDefault();
-
-        var title = $('#postTitle').val().trim();
-        var content = $('#postContent').val().trim();
-        var image = $('#postImage')[0].files[0];
-        var link = $('#postLink').val().trim();
+        const title = $('#postTitle').val().trim();
+        const content = $('#postContent').val().trim();
+        const image = $('#postImage')[0].files[0];
+        const link = $('#postLink').val().trim();
 
         if (title === '') {
             $('#titleError').show();
             return;
         }
 
-        var formData = new FormData();
+        const formData = new FormData();
         formData.append('postTitle', title);
         formData.append('postContent', content);
-
         if (image) {
             formData.append('image', image);
         }
         if (link) {
-            formData.append('postLink', link)
+            formData.append('postLink', link);
         }
 
         $.ajax({

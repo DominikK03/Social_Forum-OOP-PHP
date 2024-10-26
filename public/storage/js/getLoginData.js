@@ -17,9 +17,10 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 if (response.success) {
+                    sessionStorage.setItem('userRole', response.role);
                     location.href = '/';
                 } else {
-                    $('.invalid-feedback').show();
+                    $('.invalid-feedback').show().delay(3000).fadeOut();
                 }
             },
             error: function (xhr, status, error) {

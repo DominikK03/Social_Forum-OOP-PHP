@@ -32,7 +32,7 @@ use Ramsey\Uuid\UuidInterface;
         );
     }
 
-    public function loginUser(string $username, string $password)
+    public function loginUser(string $username, string $password) : User
     {
         $this->authRepository->verifyLoginRequest($username, $password);
         $user = $this->authRepository->findByUsername($username);
@@ -44,6 +44,7 @@ use Ramsey\Uuid\UuidInterface;
             'createdAt' => $user->getCreatedAt(),
             'role' => $user->getRole(),
         ];
+        return $user;
     }
 
     public function logoutUser()

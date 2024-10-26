@@ -14,11 +14,11 @@ use app\Repository\Post\PostRepository;
 use app\Request\CommentRequest;
 use app\Service\Comment\CommentService;
 use app\Util\TemplateRenderer;
-use app\View\NavbarView;
 use app\View\Post\CommentView;
 use app\View\Post\PostPageView;
 use app\View\Post\SinglePostView;
 use app\View\Post\TeewtView;
+use app\View\Util\NavbarView;
 
 #[AllowDynamicProperties] class PostPageController
 {
@@ -36,7 +36,7 @@ use app\View\Post\TeewtView;
     }
 
 
-    #[Route('/post', 'GET', [Role::user, Role::admin])]
+    #[Route('/post', 'GET', [Role::user, Role::admin, Role::master])]
     public function postPageView(CommentRequest $request): ResponseInterface
     {
         $navbarView = new NavbarView();
@@ -47,7 +47,7 @@ use app\View\Post\TeewtView;
         return new HtmlResponse($postPageView->renderWithRenderer($this->renderer));
     }
 
-    #[Route('/postcomment', 'POST', [Role::user, Role::admin])]
+    #[Route('/postcomment', 'POST', [Role::user, Role::admin, Role::master])]
     public function handleComment(CommentRequest $request) : ResponseInterface
     {
         try {

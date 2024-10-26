@@ -11,6 +11,6 @@ class RegisterView implements ViewInterface
 
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
-        return $renderer->renderHtml('registerpage.html');
+        return $renderer->renderHtml('auth/registerpage.html');
     }
 }

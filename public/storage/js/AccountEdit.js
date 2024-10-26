@@ -1,9 +1,7 @@
 $(document).ready(function () {
     $('.change-password-btn').click(function () {
         $('#password-form').toggleClass('d-none');
-        $('.invalid-feedback').hide();
-        $('.success-password').hide();
-        $('.invalid-password').hide();
+        $('.invalid-feedback, .success-password, .invalid-password').hide();
         $('#newPassword, #confirmPassword').removeClass('is-invalid is-valid');
         $('.save-password-btn').attr('disabled', 'disabled');
     });
@@ -18,30 +16,26 @@ $(document).ready(function () {
         const confirmPassword = $('#confirmPassword').val();
 
         if (validatePassword(newPassword)) {
-            $('#newPassword').removeClass('is-invalid').addClass('is-valid');
-            $('#newPassword').next('.invalid-feedback').hide();
+            $('#newPassword').removeClass('is-invalid').addClass('is-valid').next('.invalid-feedback').hide();
         } else {
-            $('#newPassword').removeClass('is-valid').addClass('is-invalid');
-            $('#newPassword').next('.invalid-feedback').show();
+            $('#newPassword').removeClass('is-valid').addClass('is-invalid').next('.invalid-feedback').show();
         }
 
         if (newPassword === confirmPassword && validatePassword(newPassword)) {
-            $('#confirmPassword').removeClass('is-invalid').addClass('is-valid');
-            $('#confirmPassword').next('.invalid-feedback').hide();
-            $('.save-password-btn').removeAttr('disabled');
+            $('#confirmPassword').removeClass('is-invalid').addClass('is-valid').next('.invalid-feedback').hide();
+            $('.save-password-btn').removeAttr('disabled').addClass('btn-success').removeClass('btn-primary');
         } else {
-            $('#confirmPassword').removeClass('is-valid').addClass('is-invalid');
-            $('#confirmPassword').next('.invalid-feedback').show();
-            $('.save-password-btn').attr('disabled', 'disabled');
+            $('#confirmPassword').removeClass('is-valid').addClass('is-invalid').next('.invalid-feedback').show();
+            $('.save-password-btn').attr('disabled', 'disabled').removeClass('btn-success').addClass('btn-primary');
         }
     });
+
     $('#avatarImage').on('change', function () {
-        var formData = new FormData();
-        var file = $('#avatarImage')[0].files[0];
+        const formData = new FormData();
+        const file = $('#avatarImage')[0].files[0];
 
         if (file) {
             formData.append('image', file);
-
             $.ajax({
                 url: '/account/postAvatar',
                 type: 'POST',
@@ -50,7 +44,7 @@ $(document).ready(function () {
                 processData: false,
                 success: function (response) {
                     console.log(response);
-                    location.href = '/account'
+                    location.href = '/account';
                     location.reload(true);
                 },
                 error: function (xhr, status, error) {
@@ -73,7 +67,7 @@ $(document).ready(function () {
         }
 
         var formData = {
-          deletePassword : deletePassword
+            deletePassword : deletePassword
         };
 
         $.ajax({
@@ -83,8 +77,8 @@ $(document).ready(function () {
             success: function (response) {
                 console.log(response)
                 if (response.success) {
-                   location.href = '/login';
-                   location.reload();
+                    location.href = '/login';
+                    location.reload();
                 } else {
                     $('.invalid-password').text('Invalid password.').removeAttr('hidden').show();
                 }
@@ -101,44 +95,42 @@ $(document).ready(function () {
     });
 
 
-$('#passwordChangeForm').on('submit', function (e) {
-    e.preventDefault();
-    const currentPassword = $('#currentPassword').val();
-    const newPassword = $('#newPassword').val();
-    const confirmPassword = $('#confirmPassword').val();
 
+    $('#passwordChangeForm').on('submit', function (e) {
+        e.preventDefault();
 
-    if (newPassword !== confirmPassword) {
-        $('#confirmPassword').addClass('is-invalid');
-        $('#confirmPassword').next('.invalid-feedback').show();
-        return;
-    }
+        const currentPassword = $('#currentPassword').val();
+        const newPassword = $('#newPassword').val();
+        const confirmPassword = $('#confirmPassword').val();
 
-    var formData = {
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-        confirmPassword: confirmPassword
-    };
-
-    $.ajax({
-        url: '/account/passwordChange',
-        type: 'POST',
-        data: formData,
-        success: function (response) {
-            if (response.success) {
-                $('#password-form').addClass('d-none');
-                $(".success-password").removeAttr('hidden').show().addClass('text-success');
-
-            } else {
-                if (response.message === "Invalid password") {
-                    $(".invalid-password").text("Invalid password.").show().addClass('text-danger');
-                }
-            }
-        },
-        error: function (xhr, status, error) {
-            alert('An error occurred: ' + error);
+        if (newPassword !== confirmPassword) {
+            $('#confirmPassword').addClass('is-invalid').next('.invalid-feedback').show();
+            return;
         }
+
+        const formData = {
+            currentPassword: currentPassword,
+            newPassword: newPassword,
+            confirmPassword: confirmPassword
+        };
+
+        $.ajax({
+            url: '/account/passwordChange',
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    $('#password-form').addClass('d-none');
+                    $('.success-password').removeAttr('hidden').show().addClass('text-success').fadeOut(2000);
+                } else {
+                    if (response.message === 'Invalid password') {
+                        $('.invalid-password').text('Invalid password.').show().addClass('text-danger').delay(3000).fadeOut();
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred: ' + error);
+            }
+        });
     });
 });
-})
-;

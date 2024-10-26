@@ -19,9 +19,13 @@ use app\Service\Auth\AuthService;
 use app\Service\Image\ImageService;
 use app\Service\Post\PostService;
 use app\Util\TemplateRenderer;
+use app\View\Admin\AdminMainPageView;
+use app\View\Admin\AdminNavbarView;
+use app\View\Admin\AdminPostView;
 use app\View\MainPage\MainPageView;
-use app\View\NavbarView;
 use app\View\Post\PostView;
+use app\View\Util\NavbarView;
+use app\View\Util\PostFormView;
 
 #[AllowDynamicProperties] class MainPageController
 {
@@ -41,21 +45,23 @@ use app\View\Post\PostView;
         $this->renderer = $renderer;
     }
 
-    #[Route('/', 'GET', [Role::user, Role::admin])]
+    #[Route('/', 'GET', [Role::user, Role::admin, Role::master])]
     public function MainPage(MainPageRequest $request): ResponseInterface
     {
         if ($this->authService->isLoggedIn()) {
+            $postFormView = new PostFormView();
             $navbarView = new NavbarView();
             $postView = new PostView($this->postService->getPostsWithCommentRow());
-            $mainPageView = new MainPageView($postView, $navbarView);
+            $mainPageView = new MainPageView($postView, $navbarView, $postFormView);
             return new HtmlResponse($mainPageView->renderWithRenderer($this->renderer));
+
         } else {
             return new RedirectResponse('/login', []);
         }
 
     }
 
-    #[Route('/postData', 'POST', [Role::user, Role::admin])]
+    #[Route('/postData', 'POST', [Role::user, Role::admin, Role::master])]
     public function handlePost(PostRequest $request): ResponseInterface
     {
         try {

@@ -3,8 +3,10 @@
 namespace app\Util;
 
 use AllowDynamicProperties;
+use app\Enum\Role;
 use app\Exception\EmptyCommentException;
 use app\Exception\FileIsntImageException;
+use app\Exception\MasterRoleException;
 use app\Exception\NotProperSizeException;
 use app\Exception\PasswordDoesntMatchException;
 use app\Exception\UserDoesntExistException;
@@ -94,5 +96,21 @@ use app\Exception\UsernameAlreadyExistsException;
         {
             throw new WrongPasswordException();
         }
+    }
+
+    public static function assertUserDoesntExist(?object $user)
+    {
+        if (is_null($user)){
+            throw new UserDoesntExistException();
+        }
+    }
+
+    public static function assertMasterRoleChange(object $user)
+    {
+        if ($user->getRole() === Role::master)
+        {
+            throw new MasterRoleException();
+        }
+
     }
 }

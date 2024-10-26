@@ -30,15 +30,15 @@ use app\Util\StaticValidator;
         $this->accountRepository->updatePassword($user, $newPassword);
     }
 
-    public function setAvatar(Image $image, string $username, string $avatarName)
+    public function setAvatar(Image $image, string $username)
     {
-        $this->imageService->updateAvatar($image, $avatarName);
+        $this->imageService->updateAvatar($image);
         $this->accountRepository->insertAvatarImage($image, $username);
     }
     public function deleteAccountWithConfirmation(User $user, string $deletePassword)
     {
         StaticValidator::assertConfirmPasswordDelete($deletePassword, $user->getPasswordHash());
-        $this->accountRepository->deleteAccount($user);
         $this->accountRepository->deleteImagesAssignedToAccount($user);
+        $this->accountRepository->deleteAccount($user);
     }
 }

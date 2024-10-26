@@ -16,6 +16,6 @@ use app\View\ViewInterface;
 
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
-        return $renderer->renderComments('comment.html', $this->data);
+        return $renderer->renderComments('post/comment.html', $this->data);
     }
 }

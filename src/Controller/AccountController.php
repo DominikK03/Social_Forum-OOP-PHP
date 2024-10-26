@@ -21,7 +21,8 @@ use app\Service\Image\ImageService;
 use app\Util\TemplateRenderer;
 use app\View\Account\AccountInfoView;
 use app\View\Account\AccountView;
-use app\View\NavbarView;
+use app\View\Admin\AdminNavbarView;
+use app\View\Util\NavbarView;
 
 #[AllowDynamicProperties] class AccountController
 {
@@ -39,7 +40,7 @@ use app\View\NavbarView;
         $this->imageService = $imageService;
     }
 
-    #[Route('/account', 'GET', [Role::user, Role::admin])]
+    #[Route('/account', 'GET', [Role::user, Role::admin, Role::master])]
     public function accountView(AccountRequest $request): ResponseInterface
     {
         if ($this->authService->isLoggedIn()) {
@@ -57,14 +58,7 @@ use app\View\NavbarView;
         }
     }
 
-    #[Route('/admin', 'GET', [Role::admin])]
-    public function adminView(AccountRequest $request): ResponseInterface
-    {
-        echo 'hellow';
-
-    }
-
-    #[Route('/account/passwordChange', 'POST', [Role::user, Role::admin])]
+    #[Route('/account/passwordChange', 'POST', [Role::user, Role::admin, Role::master])]
     public function passwordChange(AccountRequest $request): ResponseInterface
     {
         try {
@@ -79,21 +73,19 @@ use app\View\NavbarView;
         }
     }
 
-    #[Route('/account/postAvatar', 'POST', [Role::user, Role::admin])]
+    #[Route('/account/postAvatar', 'POST', [Role::user, Role::admin, Role::master])]
     public function setAvatarImage(AccountRequest $request): ResponseInterface
     {
         try {
-            $avatar = $this->imageService->createImage(
-                "avatar-" . $request->getUserSession()['username'] . "."
-                . str_replace('image/', '', $request->getImageType()),
-                $request->getImageTmpName(),
-                $request->getImageType(),
-                $request->getImageSize()
-            );
             $this->accountService->setAvatar(
-                $avatar,
-                $request->getUserSession()['username'],
-                $avatar->getImageName()
+                $this->imageService->createImage(
+                    "avatar-" . $request->getUserSession()['username'] . "."
+                    . str_replace('image/', '', $request->getImageType()),
+                    $request->getImageTmpName(),
+                    $request->getImageType(),
+                    $request->getImageSize()
+                ),
+                $request->getUserSession()['username']
             );
             return new JsonResponse(['success' => true]);
         } catch (FileIsntImageException) {
@@ -103,7 +95,7 @@ use app\View\NavbarView;
         }
     }
 
-    #[Route('/account/deleteAccount', 'POST', [Role::user, Role::admin])]
+    #[Route('/account/deleteAccount', 'POST', [Role::user, Role::admin, Role::master])]
     public function deleteAccount(AccountRequest $request): ResponseInterface
     {
         try {
