@@ -30,12 +30,10 @@ use app\View\Util\NavbarView;
         TemplateRenderer           $renderer,
         AuthService                $authService,
         AccountService             $accountService,
-        AccountRepositoryInterface $accountRepository,
         ImageService               $imageService)
     {
         $this->authService = $authService;
         $this->accountService = $accountService;
-        $this->accountRepository = $accountRepository;
         $this->renderer = $renderer;
         $this->imageService = $imageService;
     }
@@ -49,7 +47,7 @@ use app\View\Util\NavbarView;
                 '{{Username}}' => $request->getUserSession()['username'],
                 '{{Email}}' => $request->getUserSession()['email'],
                 '{{CreatedAt}}' => $request->getUserSession()['createdAt']->format("Y-m-d H:i:s"),
-                '{{Avatar}}' => $this->accountRepository->getUserAvatar($request->getUserSession()['username']),
+                '{{Avatar}}' => $this->accountService->accountRepository->getUserAvatar($request->getUserSession()['username']),
             ]);
             $accountView = new AccountView($accountInfoView, $navbarView);
             return new HtmlResponse($accountView->renderWithRenderer($this->renderer));

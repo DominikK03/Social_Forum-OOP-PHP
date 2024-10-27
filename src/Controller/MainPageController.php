@@ -1,6 +1,8 @@
 <?php
 
 namespace app\Controller;
+require '../vendor/autoload.php';
+
 
 use AllowDynamicProperties;
 use app\Core\HTTP\Attribute\Route;
@@ -20,7 +22,6 @@ use app\Service\Image\ImageService;
 use app\Service\Post\PostService;
 use app\Util\TemplateRenderer;
 use app\View\Admin\AdminMainPageView;
-use app\View\Admin\AdminNavbarView;
 use app\View\Admin\AdminPostView;
 use app\View\MainPage\MainPageView;
 use app\View\Post\PostView;
@@ -45,7 +46,7 @@ use app\View\Util\PostFormView;
         $this->renderer = $renderer;
     }
 
-    #[Route('/', 'GET', [Role::user, Role::admin, Role::master])]
+    #[Route("/", 'GET', [Role::user, Role::admin, Role::master])]
     public function MainPage(MainPageRequest $request): ResponseInterface
     {
         if ($this->authService->isLoggedIn()) {
@@ -67,9 +68,10 @@ use app\View\Util\PostFormView;
         try {
             if (!empty($request->getImage())) {
                 $currentData = new \DateTime();
-                $imageName = $currentData->format('Ymdhi') . "."
+                $imageName = $currentData->format('Ymdhis') . "."
                     . str_replace('image/', '', $request->getImageType());
                 $this->postService->createPost(
+                    $this->authService->getLoggedInUser($request->getUserSession()),
                     $request->getPostTitle(),
                     $request->getPostContent(),
                     $request->getPostLink(),
@@ -83,6 +85,7 @@ use app\View\Util\PostFormView;
                 $this->imageService->uploadPostImage($image);
             } else {
                 $this->postService->createPost(
+                    $this->authService->getLoggedInUser($request->getUserSession()),
                     $request->getPostTitle(),
                     $request->getPostContent(),
                     $request->getPostLink()
@@ -95,6 +98,10 @@ use app\View\Util\PostFormView;
         }
         return new JsonResponse(['success' => true]);
     }
-
-
+    #[Route('/deletePost', 'POST', [Role::admin, Role::master])]
+    public function handlePostDelete(PostRequest $request) : ResponseInterface
+    {
+        $this->postService->deletePostByID($request->getDeletePostID());
+        return new JsonResponse(['success'=>true]);
+    }
 }

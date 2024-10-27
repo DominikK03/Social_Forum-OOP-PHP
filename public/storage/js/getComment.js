@@ -46,7 +46,7 @@ $(document).ready(function () {
 
 
         $.ajax({
-            url: '/postcomment'+'?postID='+postID,
+            url: '/post/postComment'+'?postID='+postID,
             type: 'POST',
             data: formData,
             processData: false,

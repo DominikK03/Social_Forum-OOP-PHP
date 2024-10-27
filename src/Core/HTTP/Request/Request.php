@@ -68,5 +68,4 @@ class Request
     {
         return $this->session[$session][$param] ?? null;
     }
-
 }

@@ -9,5 +9,6 @@ interface ImageRepositoryInterface
     public function uploadImage(Image $image);
     public function uploadAvatar(Image $image);
     public function deleteAvatar(string $avatarName);
+    public function deleteImage(string $imageName);
 
 }

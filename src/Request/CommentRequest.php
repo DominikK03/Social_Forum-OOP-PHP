@@ -20,9 +20,12 @@ use app\Core\HTTP\Request\Request;
     public function fromRequest()
     {
         $this->username = $this->request->getSessionParam('user', 'username');
-        $this->postID = $this->request->getQueryParams('postID');
+        if ($this->request->getQuery()){
+            $this->postID = $this->request->getQueryParams('postID');
+        }
 
-        if ($this->request->getMethod() == "POST") {
+
+        if (!empty($this->request->getRequestParam('comment'))) {
             $this->commentContent = htmlspecialchars($this->request->getRequestParam('comment'));
         }
     }
@@ -49,5 +52,10 @@ use app\Core\HTTP\Request\Request;
     public function getUsername(): string
     {
         return $this->username;
+    }
+
+    public function getCommentID() : string
+    {
+        return json_decode(file_get_contents("php://input"), true)['comment_id'];
     }
 }

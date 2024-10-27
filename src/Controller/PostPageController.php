@@ -13,6 +13,7 @@ use app\Repository\Comment\CommentRepositoryInterface;
 use app\Repository\Post\PostRepository;
 use app\Request\CommentRequest;
 use app\Service\Comment\CommentService;
+use app\Service\Post\PostService;
 use app\Util\TemplateRenderer;
 use app\View\Post\CommentView;
 use app\View\Post\PostPageView;
@@ -24,15 +25,13 @@ use app\View\Util\NavbarView;
 {
     public function __construct(
         TemplateRenderer $renderer,
-        PostRepository $postRepository,
+        PostService $postService,
         CommentService $commentService,
-        CommentRepositoryInterface $commentRepository
     )
     {
         $this->renderer = $renderer;
-        $this->postRepository = $postRepository;
+        $this->postService = $postService;
         $this->commentService = $commentService;
-        $this->commentRepository = $commentRepository;
     }
 
 
@@ -40,14 +39,14 @@ use app\View\Util\NavbarView;
     public function postPageView(CommentRequest $request): ResponseInterface
     {
         $navbarView = new NavbarView();
-        $postView = new SinglePostView($this->postRepository->getPost($request->getPostID()));
-        $commentView = new CommentView($this->commentRepository->getComments($request->getPostID()));
+        $postView = new SinglePostView($this->postService->postRepository->getPost($request->getPostID()));
+        $commentView = new CommentView($this->commentService->commentRepository->getComments($request->getPostID()));
         $teewtView = new TeewtView($postView, $commentView);
         $postPageView = new PostPageView($teewtView, $navbarView);
         return new HtmlResponse($postPageView->renderWithRenderer($this->renderer));
     }
 
-    #[Route('/postcomment', 'POST', [Role::user, Role::admin, Role::master])]
+    #[Route('/post/postComment', 'POST', [Role::user, Role::admin, Role::master])]
     public function handleComment(CommentRequest $request) : ResponseInterface
     {
         try {
@@ -62,6 +61,12 @@ use app\View\Util\NavbarView;
             return new JsonResponse(['success'=>false, 'message'=>$exception->getMessage()]);
         }
         return new JsonResponse(['success' => true]);
+    }
+    #[Route('/post/deleteComment', 'POST', [Role::admin, Role::master])]
+    public function handleCommentDelete(CommentRequest $request) : ResponseInterface
+    {
+        $this->commentService->commentRepository->deleteCommentByID($request->getCommentID());
+        return new JsonResponse(['success'=>true]);
     }
 
 }
