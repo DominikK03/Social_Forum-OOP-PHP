@@ -1,8 +1,15 @@
-.comment-box {
-    border-top: 1px solid #e1e8ed;
-    padding-top: 15px;
-    margin-top: 15px;
+.comment-container {
+    background-color: #ffffff;
+    padding: 10px;
+    position: relative;
 }
+
+.comment-header {
+    border-top: 1px solid #e1e8ed;
+    padding-top: 5px;
+    margin-top: 5px;
+}
+
 .comment-input {
     width: 100%;
     border: none;
@@ -10,6 +17,7 @@
     padding: 10px;
     resize: none;
 }
+
 .comment-btn {
     background-color: #1DA1F2;
     color: white;
@@ -18,6 +26,7 @@
     border-radius: 20px;
     margin-top: 10px;
 }
+
 .comment-btn:hover {
     background-color: #0c7abf;
 }
@@ -39,5 +48,15 @@
     margin-left: 10px;
     word-wrap: break-word;
     overflow-wrap: break-word;
+}
 
+.delete-comment-icon {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
 }

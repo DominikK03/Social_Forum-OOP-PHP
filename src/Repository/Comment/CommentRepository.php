@@ -31,6 +31,7 @@ use app\MysqlClientInterface;
     {
         $builder = $this->client->createQueryBuilder()
             ->select("
+            comment.comment_id,
             comment.content,
             comment.created_at,
             comment.post_id,
@@ -41,5 +42,14 @@ use app\MysqlClientInterface;
             ->where('comment.post_id', '=', $postID)
             ->orderBy('comment.created_at', 'DESC');
         return $this->client->getResults($builder->getSelectQuery());
+    }
+
+    public function deleteCommentByID(string $commentID)
+    {
+        $builder = $this->client
+            ->createQueryBuilder()
+            ->delete('comment')
+            ->where('comment_id', '=', $commentID);
+        $this->client->pushWithoutResults($builder->getDeleteQuery());
     }
 }

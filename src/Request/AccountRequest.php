@@ -7,7 +7,6 @@ use app\Core\HTTP\Request\Request;
 
 #[AllowDynamicProperties] class AccountRequest extends Request implements RequestInterface
 {
-    private array $userSession;
     private ?string $currentPassword;
     private string $deletePassword;
     private ?string $newPassword;
@@ -22,9 +21,6 @@ use app\Core\HTTP\Request\Request;
 
     public function fromRequest()
     {
-        if ($this->request->getSession('user') !== null) {
-            $this->userSession = $this->request->getSession('user');
-        }
         if ($this->request->getMethod() == "POST") {
             if (!empty($this->request->getFiles())) {
                 $this->imageTmpName = $this->request->getFileParam('image', 'tmp_name');
@@ -99,10 +95,12 @@ use app\Core\HTTP\Request\Request;
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getUserSession(): array
+    public function getUserSession(): array|null
     {
-        return $this->userSession;
+        return $this->request->getSession('user');
     }
+
+
 }

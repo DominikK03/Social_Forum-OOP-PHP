@@ -11,6 +11,7 @@ interface PostRepositoryInterface
     public function getPost(string $postID): array;
     public function countComments(string $postID): int;
 
+    public function deletePost(string $getDeletePostID);
 
 
 }

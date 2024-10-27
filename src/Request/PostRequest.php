@@ -11,7 +11,6 @@ use app\Core\HTTP\Request\Request;
     private ?string $imageTmpName;
     private ?string $imageType;
     private ?int $imageSize;
-
     private string $postID;
     private string $postTitle;
     private ?string $postContent = null;
@@ -100,4 +99,16 @@ use app\Core\HTTP\Request\Request;
         return $this->postID;
     }
 
+    public function getUserSession(): array|null
+    {
+        return $this->request->getSession('user');
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeletePostID(): string
+    {
+        return json_decode(file_get_contents("php://input"), true)['post_id'];
+    }
 }
