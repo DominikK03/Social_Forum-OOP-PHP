@@ -75,13 +75,4 @@ use app\MysqlClientInterface;
             ->where('post_id', '=', $postID);
         return $this->client->rowCount($builder->getSelectQuery());
     }
-
-    public function deletePost(string $getDeletePostID)
-    {
-        $builder = $this->client
-            ->createQueryBuilder()
-            ->delete('post')
-            ->where('post_id', '=', $getDeletePostID);
-        $this->client->pushWithoutResults($builder->getDeleteQuery());
-    }
 }

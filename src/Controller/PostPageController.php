@@ -12,6 +12,7 @@ use app\Exception\EmptyCommentException;
 use app\Repository\Comment\CommentRepositoryInterface;
 use app\Repository\Post\PostRepository;
 use app\Request\CommentRequest;
+use app\Service\AdminService\AdminService;
 use app\Service\Comment\CommentService;
 use app\Service\Post\PostService;
 use app\Util\TemplateRenderer;
@@ -27,11 +28,13 @@ use app\View\Util\NavbarView;
         TemplateRenderer $renderer,
         PostService $postService,
         CommentService $commentService,
+        AdminService $adminService
     )
     {
         $this->renderer = $renderer;
         $this->postService = $postService;
         $this->commentService = $commentService;
+        $this->adminService = $adminService;
     }
 
 
@@ -65,7 +68,7 @@ use app\View\Util\NavbarView;
     #[Route('/post/deleteComment', 'POST', [Role::admin, Role::master])]
     public function handleCommentDelete(CommentRequest $request) : ResponseInterface
     {
-        $this->commentService->commentRepository->deleteCommentByID($request->getCommentID());
+        $this->adminService->adminRepository->deleteCommentByID($request->getCommentID());
         return new JsonResponse(['success'=>true]);
     }
 

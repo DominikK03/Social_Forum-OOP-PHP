@@ -6,6 +6,9 @@
     margin-bottom: 20px;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     position: relative;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .post-container:hover {
@@ -22,16 +25,22 @@
 .post-title {
     font-size: 1.25rem;
     font-weight: bold;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .post-content {
     font-size: 1rem;
     margin-bottom: 10px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .post-link a {
     color: #007bff;
     text-decoration: none;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .post-link a:hover {
