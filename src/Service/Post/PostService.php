@@ -48,14 +48,6 @@ use app\Service\Image\ImageService;
         return $posts;
     }
 
-    public function deletePostByID(string $deletePostID)
-    {
-        $post = $this->postRepository->getPost($deletePostID);
-        if ($post['image'] != ''){
-            $this->imageService->imageRepository->deleteImage($post['image']);
-        }
-        $this->postRepository->deletePost($post['post_id']);
 
-    }
 
 }

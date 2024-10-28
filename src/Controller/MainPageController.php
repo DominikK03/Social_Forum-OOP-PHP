@@ -17,6 +17,7 @@ use app\Repository\Image\ImageRepositoryInterface;
 use app\Repository\Post\PostRepositoryInterface;
 use app\Request\MainPageRequest;
 use app\Request\PostRequest;
+use app\Service\AdminService\AdminService;
 use app\Service\Auth\AuthService;
 use app\Service\Image\ImageService;
 use app\Service\Post\PostService;
@@ -34,16 +35,15 @@ use app\View\Util\PostFormView;
         TemplateRenderer         $renderer,
         AuthService              $authService,
         ImageService             $imageService,
-        ImageRepositoryInterface $imageRepository,
         PostService              $postService,
-        PostRepositoryInterface  $postRepository)
+        AdminService             $adminService
+    )
     {
         $this->postService = $postService;
-        $this->postRepository = $postRepository;
         $this->imageService = $imageService;
-        $this->imageRepository = $imageRepository;
         $this->authService = $authService;
         $this->renderer = $renderer;
+        $this->adminService = $adminService;
     }
 
     #[Route("/", 'GET', [Role::user, Role::admin, Role::master])]
@@ -98,10 +98,11 @@ use app\View\Util\PostFormView;
         }
         return new JsonResponse(['success' => true]);
     }
+
     #[Route('/deletePost', 'POST', [Role::admin, Role::master])]
-    public function handlePostDelete(PostRequest $request) : ResponseInterface
+    public function handlePostDelete(PostRequest $request): ResponseInterface
     {
-        $this->postService->deletePostByID($request->getDeletePostID());
-        return new JsonResponse(['success'=>true]);
+        $this->adminService->deletePostByID($request->getDeletePostID());
+        return new JsonResponse(['success' => true]);
     }
 }

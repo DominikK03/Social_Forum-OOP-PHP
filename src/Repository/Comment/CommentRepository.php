@@ -43,13 +43,4 @@ use app\MysqlClientInterface;
             ->orderBy('comment.created_at', 'DESC');
         return $this->client->getResults($builder->getSelectQuery());
     }
-
-    public function deleteCommentByID(string $commentID)
-    {
-        $builder = $this->client
-            ->createQueryBuilder()
-            ->delete('comment')
-            ->where('comment_id', '=', $commentID);
-        $this->client->pushWithoutResults($builder->getDeleteQuery());
-    }
 }

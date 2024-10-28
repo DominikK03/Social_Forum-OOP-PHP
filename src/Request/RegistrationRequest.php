@@ -19,10 +19,10 @@ use app\Core\HTTP\Request\Request;
     public function fromRequest()
     {
         if ($this->request->getMethod() == "POST"){
-            $this->name = $this->request->getRequestParam('name');
-            $this->email = $this->request->getRequestParam('email');
-            $this->password = $this->request->getRequestParam('password');
-            $this->confirmPassword = $this->request->getRequestParam('confirmPassword');
+            $this->name = htmlspecialchars($this->request->getRequestParam('name'));
+            $this->email = htmlspecialchars($this->request->getRequestParam('email'));
+            $this->password = htmlspecialchars($this->request->getRequestParam('password'));
+            $this->confirmPassword = htmlspecialchars($this->request->getRequestParam('confirmPassword'));
         }
 
     }
