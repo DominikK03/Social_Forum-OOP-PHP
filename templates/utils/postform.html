@@ -1,0 +1,20 @@
+<div class="post-box mb-3">
+    <form id="postForm" enctype="multipart/form-data">
+        <input type="text" class="post-title-input form-control" id="postTitle" placeholder="Post title...">
+        <small id="titleError" class="text-danger" style="display: none;">Title is required.</small>
+        <textarea class="post-input form-control mt-2" id="postContent" rows="3" placeholder="What's on your mind?"></textarea>
+        <small id="contentInfo" class="text-secondary mt-1 mb-1" style="display: none;"></small>
+        <input type="text" class="post-link-input form-control" id="postLink" placeholder="Post link...">
+        <small id="invalid-postLink" class="text-secondary mt-1 mb-1" style="display: none;">Post Link is incorrect</small>
+        <input type="file" class="form-control post-photo mt-2" id="postImage" name="image" accept="image/*">
+        <div class="text-end mt-2">
+            <div class="text-start mt-1">
+                <small class="text-muted">
+                    FORMAT: jpg, png, jpeg Max size: 1 MB<br>
+                    *Image, content and link are optional inputs<br>
+                </small>
+            </div>
+            <button type="submit" class="btn post-btn btn-primary" id="postButton" disabled>Post</button>
+        </div>
+    </form>
+</div>
