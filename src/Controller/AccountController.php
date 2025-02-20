@@ -4,95 +4,92 @@ namespace app\Controller;
 
 use AllowDynamicProperties;
 use app\Core\HTTP\Attribute\Route;
+use app\Core\HTTP\Response\ErrorResponses\InvalidPasswordResponse;
+use app\Core\HTTP\Response\ErrorResponses\NotLoggedInRedirectResponse;
 use app\Core\HTTP\Response\HtmlResponse;
-use app\Core\HTTP\Response\JsonResponse;
-use app\Core\HTTP\Response\RedirectResponse;
 use app\Core\HTTP\Response\ResponseInterface;
+use app\Core\HTTP\Response\SuccessfullResponse;
+use app\Core\HTTP\Response\UnsuccessfullResponse;
 use app\Enum\Role;
 use app\Exception\FileIsntImageException;
 use app\Exception\NotProperSizeException;
 use app\Exception\PasswordDoesntMatchException;
 use app\Exception\WrongPasswordException;
-use app\Repository\Account\AccountRepositoryInterface;
 use app\Request\AccountRequest;
 use app\Service\Account\AccountService;
 use app\Service\Auth\AuthService;
 use app\Service\Image\ImageService;
 use app\Util\TemplateRenderer;
-use app\View\Account\AccountInfoView;
-use app\View\Account\AccountView;
-use app\View\Admin\AdminNavbarView;
-use app\View\Util\NavbarView;
+use app\View\ViewFactory;
 
-#[AllowDynamicProperties] class AccountController
+#[AllowDynamicProperties]
+class AccountController
 {
     public function __construct(
-        TemplateRenderer           $renderer,
-        AuthService                $authService,
-        AccountService             $accountService,
-        ImageService               $imageService)
+        TemplateRenderer $renderer,
+        AuthService $authService,
+        AccountService $accountService,
+        ImageService $imageService,
+        ViewFactory $viewFactory
+    )
     {
         $this->authService = $authService;
         $this->accountService = $accountService;
         $this->renderer = $renderer;
         $this->imageService = $imageService;
+        $this->viewFactory = $viewFactory;
     }
-
     #[Route('/account', 'GET', [Role::user, Role::admin, Role::master])]
     public function accountView(AccountRequest $request): ResponseInterface
     {
         if ($this->authService->isLoggedIn()) {
-            $navbarView = new NavbarView();
-            $accountInfoView = new AccountInfoView([
-                '{{Username}}' => $request->getUserSession()['username'],
-                '{{Email}}' => $request->getUserSession()['email'],
-                '{{CreatedAt}}' => $request->getUserSession()['createdAt']->format("Y-m-d H:i:s"),
-                '{{Avatar}}' => $this->accountService->accountRepository->getUserAvatar($request->getUserSession()['username']),
-            ]);
-            $accountView = new AccountView($accountInfoView, $navbarView);
+            $accountView = $this->viewFactory->createAccountView(
+                $this->viewFactory->createAccountInfoView([
+                    'Username' => $request->getUserSession()['userName'],
+                    'Email' => $request->getUserSession()['email'],
+                    'CreatedAt' => $request->getUserSession()['createdAt']->format("Y-m-d H:i:s"),
+                    'Avatar' => $this->accountService->accountRepository->getUserAvatar($request->getUserSession()['userName'])
+                ])
+            );
             return new HtmlResponse($accountView->renderWithRenderer($this->renderer));
         } else {
-            return new RedirectResponse('/', ['loginStatus' => 'not-logged-in']);
+            return new NotLoggedInRedirectResponse();
         }
     }
-
     #[Route('/account/passwordChange', 'POST', [Role::user, Role::admin, Role::master])]
     public function passwordChange(AccountRequest $request): ResponseInterface
     {
         try {
             $this->accountService->changePassword(
-                $request->getUserSession()['username'],
+                $request->getUserSession()['userName'],
                 $request->getCurrentPassword(),
                 $request->getNewPassword()
             );
-            return new JsonResponse(['success' => true]);
+            return new SuccessfullResponse();
         } catch (PasswordDoesntMatchException) {
-            return new JsonResponse(['success' => false, 'message' => 'Invalid password']);
+            return new InvalidPasswordResponse();
         }
     }
-
     #[Route('/account/postAvatar', 'POST', [Role::user, Role::admin, Role::master])]
     public function setAvatarImage(AccountRequest $request): ResponseInterface
     {
         try {
             $this->accountService->setAvatar(
-                $this->imageService->createImage(
-                    "avatar-" . $request->getUserSession()['username'] . "."
-                    . str_replace('image/', '', $request->getImageType()),
+               $image = $this->imageService->createAvatarImage(
+                    $request->getUserSession()['userName'],
                     $request->getImageTmpName(),
                     $request->getImageType(),
                     $request->getImageSize()
                 ),
-                $request->getUserSession()['username']
+                $request->getUserSession()['userName']
             );
-            return new JsonResponse(['success' => true]);
+            return new SuccessfullResponse();
         } catch (FileIsntImageException) {
-            return new JsonResponse(['success' => false]);
+            return new UnsuccessfullResponse();
         } catch (NotProperSizeException) {
-            return new JsonResponse(['success' => false]);
+            return new UnsuccessfullResponse();
         }
     }
-
     #[Route('/account/deleteAccount', 'POST', [Role::user, Role::admin, Role::master])]
     public function deleteAccount(AccountRequest $request): ResponseInterface
     {
@@ -104,10 +101,9 @@ use app\View\Util\NavbarView;
                 $request->getDeletePassword()
             );
             $this->authService->logoutUser();
-            return new JsonResponse(['success' => true]);
+            return new SuccessfullResponse();
         } catch (WrongPasswordException $e) {
-            return new JsonResponse(['success' => false, 'message' => $e->getMessage()]);
+            return new InvalidPasswordResponse();
         }
     }
-
 }

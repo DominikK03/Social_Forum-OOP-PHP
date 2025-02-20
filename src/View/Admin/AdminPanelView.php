@@ -9,6 +9,7 @@ use app\View\ViewInterface;
 
 #[AllowDynamicProperties] class AdminPanelView implements ViewInterface
 {
+    const ADMIN_PANEL_VIEW = 'admin/adminpanel.html';
     public function __construct(NavbarView $navbarView)
     {
         $this->navbarView = $navbarView;
@@ -16,8 +17,8 @@ use app\View\ViewInterface;
 
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
-        return $renderer->renderHtml('admin/adminpanel.html', [
-            '{{Navbar}}' => $this->navbarView->renderWithRenderer($renderer)
+        return $renderer->renderHtml(self::ADMIN_PANEL_VIEW, [
+            'Navbar' => $this->navbarView->renderWithRenderer($renderer)
         ]);
     }
 }

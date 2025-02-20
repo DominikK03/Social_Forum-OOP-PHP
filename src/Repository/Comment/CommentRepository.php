@@ -3,44 +3,44 @@
 namespace app\Repository\Comment;
 
 use AllowDynamicProperties;
+use app\PDO\MysqlClientInterface;
 use app\Model\Comment;
-use app\MysqlClientInterface;
 
-#[AllowDynamicProperties] class CommentRepository implements CommentRepositoryInterface
+#[AllowDynamicProperties]
+class CommentRepository implements CommentRepositoryInterface
 {
     public function __construct(MysqlClientInterface $client)
     {
         $this->client = $client;
     }
-
     public function insertComment(Comment $comment)
     {
         $builder = $this->client
             ->createQueryBuilder()
             ->insert('comment', [
-                'comment_id' => $comment->getCommentId()->toString(),
-                'content' => $comment->getContent(),
-                'created_at' => $comment->getCreatedAt()->format('Y-m-d H:i:s'),
-                'user_id' => $comment->getUser()->getUserId(),
-                'post_id' => $comment->getCurrentPostId()
+                'commentID' => $comment->commentId->toString(),
+                'content' => $comment->content,
+                'createdAt' => $comment->createdAt->format('Y-m-d H:i:s'),
+                'userID' => $comment->user->getUserId(),
+                'postID' => $comment->currentPostID
             ]);
-        $this->client->pushWithoutResults($builder->getInsertQuery());
+        $this->client->persist($builder->getInsertQuery());
     }
-
-    public function getComments(string $postID) : array
+    public function getComments(string $postID): array
     {
         $builder = $this->client->createQueryBuilder()
-            ->select("
-            comment.comment_id,
-            comment.content,
-            comment.created_at,
-            comment.post_id,
-            user.avatar,
-            user.user_name")
+            ->select([
+            "comment.commentID",
+            "comment.content",
+            "comment.createdAt",
+            "comment.postID",
+            "user.avatar",
+            "user.userName"
+            ])
             ->from('comment')
-            ->join('user', 'comment.user_id = user.user_id')
-            ->where('comment.post_id', '=', $postID)
-            ->orderBy('comment.created_at', 'DESC');
-        return $this->client->getResults($builder->getSelectQuery());
+            ->join('user', 'comment.userID = user.userID')
+            ->where('comment.postID', '=', $postID)
+            ->orderBy('comment.createdAt', 'DESC');
+        return $this->client->persist($builder->getSelectQuery())->getResults();
     }
 }

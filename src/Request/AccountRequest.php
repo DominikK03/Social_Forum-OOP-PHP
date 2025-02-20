@@ -5,7 +5,8 @@ namespace app\Request;
 use AllowDynamicProperties;
 use app\Core\HTTP\Request\Request;
 
-#[AllowDynamicProperties] class AccountRequest extends Request implements RequestInterface
+#[AllowDynamicProperties]
+class AccountRequest extends Request implements RequestInterface
 {
     private ?string $currentPassword;
     private string $deletePassword;
@@ -13,12 +14,10 @@ use app\Core\HTTP\Request\Request;
     private string $imageTmpName;
     private string $imageType;
     private string $imageSize;
-
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
-
     public function fromRequest()
     {
         if ($this->request->getMethod() == "POST") {
@@ -36,7 +35,6 @@ use app\Core\HTTP\Request\Request;
             }
         }
     }
-
     /**
      * @return string
      */
@@ -44,7 +42,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->currentPassword;
     }
-
     /**
      * @return string
      */
@@ -52,8 +49,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->newPassword;
     }
-
-
     /**
      * @return array
      */
@@ -61,7 +56,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->image;
     }
-
     /**
      * @return string
      */
@@ -69,7 +63,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->imageSize;
     }
-
     /**
      * @return string
      */
@@ -77,7 +70,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->imageTmpName;
     }
-
     /**
      * @return string
      */
@@ -85,7 +77,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->imageType;
     }
-
     /**
      * @return string
      */
@@ -93,7 +84,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->deletePassword;
     }
-
     /**
      * @return array|null
      */
@@ -101,6 +91,4 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->request->getSession('user');
     }
-
-
 }

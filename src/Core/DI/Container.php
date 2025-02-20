@@ -4,27 +4,25 @@ namespace app\Core\DI;
 
 use AllowDynamicProperties;
 use app\Core\DI\Exception\ClassNotFoundException;
+use app\Core\DI\Exception\ContainerCannotBuildGenericException;
 
-#[AllowDynamicProperties] class Container
+#[AllowDynamicProperties]
+class Container
 {
-
     private array $config;
     private array $registry;
     private array $instances;
     private array $bindings;
-
     public function bindInterface(string $interface, string $class): self
     {
         $this->bindings[$interface] = $class;
         return $this;
     }
-
     public function setConfig(string $class, string $parameterName, mixed $value): self
     {
         $this->config[$class][$parameterName] = $value;
         return $this;
     }
-
     public function register(string ...$classes): self
     {
         foreach ($classes as $class) {
@@ -32,7 +30,6 @@ use app\Core\DI\Exception\ClassNotFoundException;
         }
         return $this;
     }
-
     public function build(): self
     {
         foreach ($this->registry as $class) {
@@ -42,7 +39,6 @@ use app\Core\DI\Exception\ClassNotFoundException;
         }
         return $this;
     }
-
     /**
      * @throws ClassNotFoundException
      */
@@ -53,31 +49,24 @@ use app\Core\DI\Exception\ClassNotFoundException;
         }
         return $this->instances[$class];
     }
-
     public function has(string $class): bool
     {
         return isset($this->instances[$class]);
     }
-
     public function buildObject(string $class): mixed
     {
         if (interface_exists($class) && isset($this->bindings[$class])) {
             $class = $this->bindings[$class];
         }
-
         $reflectionClass = new \ReflectionClass($class);
         $constructor = $reflectionClass->getConstructor();
-
         if (is_null($constructor)) {
             return new $class;
         }
-
         $parameters = $constructor->getParameters();
         $dependencies = [];
-
         foreach ($parameters as $parameter) {
             $parameterType = $parameter->getType();
-
             if ($parameterType instanceof \ReflectionNamedType && !$parameterType->isBuiltin()) {
                 $dependencyClass = $parameterType->getName();
                 if ($this->has($dependencyClass)) {
@@ -87,13 +76,12 @@ use app\Core\DI\Exception\ClassNotFoundException;
                 }
             } else {
                 $parameterName = $parameter->getName();
-
                 if (isset($this->config[$class][$parameterName])) {
                     $dependencies[] = $this->config[$class][$parameterName];
                 } elseif ($parameter->isOptional()) {
                     $dependencies[] = $parameter->getDefaultValue();
                 } else {
-                    throw new \Exception("Cannot build");
+                    throw new ContainerCannotBuildGenericException();
                 }
             }
         }

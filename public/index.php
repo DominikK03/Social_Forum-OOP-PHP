@@ -3,32 +3,32 @@
 require '../vendor/autoload.php';
 const TEMPLATE_PATH = '../templates';
 const STORAGE_IMAGES_PATH = '../public/storage/images';
-
-
+const STORAGE_AVATARS_PATH = '../public/storage/images/avatars/';
+const DEFAULT_AVATAR = 'defaultImage.png';
 use app\Controller\AccountController;
 use app\Controller\AdminPanelController;
 use app\Controller\AuthController;
 use app\Controller\MainPageController;
 use app\Controller\PostPageController;
 use app\Core\DI\Container;
-use app\Core\HTTP\Request\Request;
+use app\Core\HTTP\Request\RequestFactory;
+use app\Core\HTTP\Request\RequestValidator;
 use app\Core\HTTP\Router;
 use app\Kernel;
-use app\MysqlClient;
-use app\MysqlClientInterface;
-use app\Repository\Account\AccountRepository;
-use app\Repository\Account\AccountRepositoryInterface;
+use app\PDO\MysqlClientInterface;
+use app\PDO\PDOMysqlClient;
+use app\Repository\Account\MysqlMysqlAccountRepository;
+use app\Repository\Account\MysqlAccountRepositoryInterface;
 use app\Repository\Admin\AdminRepository;
 use app\Repository\Admin\AdminRepositoryInterface;
 use app\Repository\Auth\AuthRepository;
 use app\Repository\Auth\AuthRepositoryInterface;
 use app\Repository\Comment\CommentRepository;
 use app\Repository\Comment\CommentRepositoryInterface;
-use app\Repository\Image\ImageRepository;
-use app\Repository\Image\ImageRepositoryInterface;
+use app\Repository\Image\FileSystemImageRepository;
+use app\Repository\Image\FileSystemImageRepositoryInterface;
 use app\Repository\Post\PostRepository;
 use app\Repository\Post\PostRepositoryInterface;
-use app\RequestValidator;
 use app\Service\Account\AccountService;
 use app\Service\Auth\AuthService;
 use app\Service\Comment\CommentService;
@@ -40,35 +40,28 @@ use app\Service\Validator\RegistrationValidator;
 use app\Util\TemplateRenderer;
 
 $container = new Container();
-$container->setConfig(MysqlClient::class,'config',[
-    'driver'=>'mysql',
-    'host'=>'db',
-    'database'=>'rettiwt',
-    'user' => 'root',
-    'pass' => 'root'
-]);
-$container->bindInterface(MysqlClientInterface::class, MysqlClient::class);
+$container->bindInterface(MysqlClientInterface::class, PDOMysqlClient::class);
 $container->bindInterface(AuthRepositoryInterface::class, AuthRepository::class);
-$container->bindInterface(AccountRepositoryInterface::class, AccountRepository::class);
+$container->bindInterface(MysqlAccountRepositoryInterface::class, MysqlMysqlAccountRepository::class);
 $container->bindInterface(PostRepositoryInterface::class, PostRepository::class);
-$container->bindInterface(ImageRepositoryInterface::class, ImageRepository::class);
+$container->bindInterface(FileSystemImageRepositoryInterface::class, FileSystemImageRepository::class);
 $container->bindInterface(CommentRepositoryInterface::class, CommentRepository::class);
 $container->bindInterface(AdminRepositoryInterface::class, AdminRepository::class);
 $container->register(
     Router::class,
-    MysqlClient::class,
+    PDOMysqlClient::class,
     TemplateRenderer::class,
     MainPageController::class,
     AccountController::class,
     PostPageController::class,
     AdminPanelController::class,
     AccountService::class,
-    AccountRepository::class,
+    MysqlMysqlAccountRepository::class,
     AuthController::class,
     AuthService::class,
     AuthRepository::class,
     RegistrationValidator::class,
-    ImageRepository::class,
+    FileSystemImageRepository::class,
     ImageService::class,
     PostService::class,
     PostRepository::class,
@@ -78,9 +71,7 @@ $container->register(
     CommentRepository::class
 )->build();
 
-
-$request = new Request($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_POST, $_GET, $_FILES, $_SESSION);
-$requestValidator = new RequestValidator($request);
+$request = RequestFactory::createFromGlobals();
 
 $container->get(Router::class)->registerControllers(
         [
@@ -92,6 +83,6 @@ $container->get(Router::class)->registerControllers(
         ]
 );
 
-$kernel = new Kernel($container, $requestValidator);
+$kernel = new Kernel($container);
 $response = $kernel->handle($request);
-echo $response->getContent();
+$kernel->sendResponse($response);

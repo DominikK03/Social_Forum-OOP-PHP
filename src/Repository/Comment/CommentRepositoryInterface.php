@@ -7,5 +7,5 @@ use app\Model\Comment;
 interface CommentRepositoryInterface
 {
     public function insertComment(Comment $comment);
-    public function getComments(string $postID) : array;
+    public function getComments(string $postID): array;
 }

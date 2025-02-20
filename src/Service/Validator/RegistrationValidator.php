@@ -5,18 +5,21 @@ namespace app\Service\Validator;
 use AllowDynamicProperties;
 use app\Repository\Auth\AuthRepositoryInterface;
 
-#[AllowDynamicProperties] class RegistrationValidator
+#[AllowDynamicProperties]
+class RegistrationValidator
 {
     public function __construct(AuthRepositoryInterface $repository)
     {
         $this->repository = $repository;
-
     }
-
-    public function validate(string $username, string $email)
+    public function validateRegistration(string $username, string $email)
     {
         $this->repository->verifyUsernameExistence($username);
         $this->repository->verifyEmailExistence($email);
     }
-
+    public function validateLogin(string $username, string $password)
+    {
+        $this->repository->verifyUsernameExistence($username);
+        $this->repository->verifyPasswordCorrectness($username, $password);
+    }
 }

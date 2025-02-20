@@ -11,6 +11,8 @@ services:
   nginx:
     image: nginx:latest
     restart: always
+    depends_on:
+      - app
     ports:
       - 8000:80
     volumes:

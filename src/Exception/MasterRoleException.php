@@ -4,5 +4,8 @@ namespace app\Exception;
 
 class MasterRoleException extends \Exception
 {
-    protected $message = "You cannot change master role!";
+    public function __construct()
+    {
+        parent::__construct("You cannot change master role!");
+    }
 }

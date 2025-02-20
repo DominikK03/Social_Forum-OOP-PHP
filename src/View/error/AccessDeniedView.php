@@ -8,13 +8,9 @@ use app\View\ViewInterface;
 
 #[AllowDynamicProperties] class AccessDeniedView implements ViewInterface
 {
-    public function __construct(TemplateRenderer $renderer)
-    {
-        $this->renderer = $renderer;
-    }
-
+    const ERROR401_VIEW = 'error/401.html';
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
-        return $renderer->renderHtml('error/401.html');
+        return $renderer->renderHtml(self::ERROR401_VIEW);
     }
 }

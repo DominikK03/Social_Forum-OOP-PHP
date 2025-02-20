@@ -4,8 +4,10 @@ namespace app\Request;
 
 use AllowDynamicProperties;
 use app\Core\HTTP\Request\Request;
+use const app\Model\USER;
 
-#[AllowDynamicProperties] class PostRequest extends Request implements RequestInterface
+#[AllowDynamicProperties]
+class PostRequest extends Request implements RequestInterface
 {
     private ?array $image;
     private ?string $imageTmpName;
@@ -15,13 +17,10 @@ use app\Core\HTTP\Request\Request;
     private string $postTitle;
     private ?string $postContent = null;
     private ?string $postLink = null;
-
-
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
-
     public function fromRequest()
     {
         if ($this->request->getFiles() !== null) {
@@ -37,13 +36,10 @@ use app\Core\HTTP\Request\Request;
         if (!empty($this->request->getQuery())) {
             $this->postID = $this->request->getQueryParams('postID');
         }
-        if (!is_null($this->request->getRequestParam('postLink'))){
+        if (!is_null($this->request->getRequestParam('postLink'))) {
             $this->postLink = htmlspecialchars($this->request->getRequestParam('postLink'));
         }
-
     }
-
-
     /**
      * @return array|null
      */
@@ -51,22 +47,18 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->image;
     }
-
     public function getImageTmpName(): string
     {
         return $this->imageTmpName;
     }
-
     public function getImageType(): string
     {
         return $this->imageType;
     }
-
     public function getImageSize(): int
     {
         return $this->imageSize;
     }
-
     /**
      * @return string
      */
@@ -74,7 +66,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->postTitle;
     }
-
     /**
      * @return string|null
      */
@@ -82,7 +73,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->postContent;
     }
-
     /**
      * @return string|null
      */
@@ -90,7 +80,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->postLink;
     }
-
     /**
      * @return string
      */
@@ -98,12 +87,10 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->postID;
     }
-
     public function getUserSession(): array|null
     {
         return $this->request->getSession('user');
     }
-
     /**
      * @return string
      */

@@ -8,21 +8,21 @@ use app\Repository\Auth\AuthRepositoryInterface;
 use app\Repository\Comment\CommentRepositoryInterface;
 use app\Service\Validator\CommentValidator;
 
-
-#[AllowDynamicProperties] class CommentService
+#[AllowDynamicProperties]
+class CommentService
 {
     public function __construct(
-        CommentFactory             $commentFactory,
-        AuthRepositoryInterface    $authRepository,
-        CommentValidator           $commentValidator,
-        CommentRepositoryInterface $commentRepository)
+        CommentFactory $commentFactory,
+        AuthRepositoryInterface $authRepository,
+        CommentValidator $commentValidator,
+        CommentRepositoryInterface $commentRepository
+    )
     {
         $this->authRepository = $authRepository;
         $this->commentFactory = $commentFactory;
         $this->commentValidator = $commentValidator;
         $this->commentRepository = $commentRepository;
     }
-
     public function createComment(
         string $commentContent,
         string $username,
@@ -35,6 +35,4 @@ use app\Service\Validator\CommentValidator;
             $this->commentFactory->fromUserInput($commentContent, $user, $postID)
         );
     }
-
-
 }

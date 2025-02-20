@@ -4,32 +4,28 @@ namespace app\Request;
 
 use AllowDynamicProperties;
 use app\Core\HTTP\Request\Request;
+use app\Model\User;
 
-#[AllowDynamicProperties] class CommentRequest extends Request implements RequestInterface
+#[AllowDynamicProperties]
+class CommentRequest extends Request implements RequestInterface
 {
-
     private string $postID;
     private string $commentContent;
     private string $username;
-
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
-
     public function fromRequest()
     {
-        $this->username = $this->request->getSessionParam('user', 'username');
-        if ($this->request->getQuery()){
+        $this->username = $this->request->getSessionParam(User::USER, User::USERNAME);
+        if ($this->request->getQuery()) {
             $this->postID = $this->request->getQueryParams('postID');
         }
-
-
         if (!empty($this->request->getRequestParam('comment'))) {
             $this->commentContent = htmlspecialchars($this->request->getRequestParam('comment'));
         }
     }
-
     /**
      * @return string
      */
@@ -37,7 +33,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->postID;
     }
-
     /**
      * @return string
      */
@@ -45,7 +40,6 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->commentContent;
     }
-
     /**
      * @return string
      */
@@ -53,9 +47,9 @@ use app\Core\HTTP\Request\Request;
     {
         return $this->username;
     }
-
-    public function getCommentID() : string
+    public function getCommentID(): ?string
     {
-        return json_decode(file_get_contents("php://input"), true)['comment_id'];
+        return $this->getRequestParam('comment_id');
     }
+
 }

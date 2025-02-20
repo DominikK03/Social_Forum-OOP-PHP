@@ -1,7 +1,6 @@
 <?php
 
 namespace app\Core\HTTP;
-
 class RouteData
 {
     private string $controller;
@@ -13,7 +12,6 @@ class RouteData
         $this->method = $method;
         $this->roles = $roles;
     }
-
     public function getController(): string
     {
         return $this->controller;
@@ -22,7 +20,6 @@ class RouteData
     {
         return $this->method;
     }
-
     /**
      * @return array
      */

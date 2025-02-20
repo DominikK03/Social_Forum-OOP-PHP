@@ -10,10 +10,5 @@ interface AuthRepositoryInterface
     public function findByUsername(string $username): ?User;
     public function verifyUsernameExistence(string $username): void;
     public function verifyEmailExistence(string $email): void;
-    public function verifyLoginRequest(string $username, string $password): void;
-
-
-
-
-
+    public function verifyPasswordCorrectness(string $username, string $password);
 }

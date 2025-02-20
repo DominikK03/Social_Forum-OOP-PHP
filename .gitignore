@@ -1,1 +1,6 @@
 /vendor
+.idea
+.DS_store
+/public/storage/images/
+/public/storage/images/avatars/
+.gitattributes

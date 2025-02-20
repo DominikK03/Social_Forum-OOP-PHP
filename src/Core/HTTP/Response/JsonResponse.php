@@ -8,7 +8,6 @@ class JsonResponse extends Response
 {
     public function __construct(array $data)
     {
-        $jsonData = json_encode($data);
-        parent::__construct($jsonData, ContentType::application);
+        parent::__construct(json_encode($data), ContentType::application);
     }
 }

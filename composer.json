@@ -1,13 +1,14 @@
 {
-    "require": {
-        "psr/container": "^2.0",
-      "ext-fileinfo": "*",
-        "ramsey/uuid": "^4.7",
-      "ext-pdo": "*"
-    },
-    "autoload": {
-        "psr-4": {
-            "app\\": "src"
-        }
+  "require": {
+    "php": "8.3",
+    "psr/container": "^2.0",
+    "ext-fileinfo": "*",
+    "ramsey/uuid": "^4.7",
+    "ext-pdo": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "app\\": "src"
     }
+  }
 }
