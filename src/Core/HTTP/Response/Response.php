@@ -7,14 +7,10 @@ use app\Core\HTTP\Enum\ContentType;
 class Response implements ResponseInterface
 {
     public function __construct(
-            private string $content,
-            private ContentType $contentType,
-            private int $statusCode = 200
-    )
-    {
-        header($this->contentType->value);
-        http_response_code($this->statusCode);
-    }
+        private string $content,
+        private ContentType $contentType,
+        private int $statusCode = 200
+    ) {}
 
     public function getContent(): string
     {
@@ -26,9 +22,8 @@ class Response implements ResponseInterface
         return $this->statusCode;
     }
 
-    public function getContentType() : ContentType
+    public function getContentType(): ContentType
     {
         return $this->contentType;
     }
-
 }

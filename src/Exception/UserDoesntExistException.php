@@ -6,6 +6,8 @@ use Exception;
 
 class UserDoesntExistException extends Exception
 {
-    protected $message = "User doesn't exist";
-
+    public function __construct()
+    {
+        parent::__construct("User doesn't exist");
+    }
 }

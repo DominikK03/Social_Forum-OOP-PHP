@@ -2,7 +2,6 @@
 
 namespace app\Service\Post;
 
-
 use AllowDynamicProperties;
 use app\Factory\PostFactory;
 use app\Model\Image;
@@ -11,10 +10,11 @@ use app\Repository\Auth\AuthRepositoryInterface;
 use app\Repository\Post\PostRepositoryInterface;
 use app\Service\Image\ImageService;
 
-#[AllowDynamicProperties] class PostService
+#[AllowDynamicProperties]
+class PostService
 {
     public function __construct(
-        PostFactory             $postFactory,
+        PostFactory $postFactory,
         AuthRepositoryInterface $authRepository,
         PostRepositoryInterface $postRepository,
         ImageService $imageService
@@ -25,29 +25,24 @@ use app\Service\Image\ImageService;
         $this->postRepository = $postRepository;
         $this->imageService = $imageService;
     }
-
     public function createPost(
         User $user,
-        string  $postTitle,
-        ?string $postContent,
-        ?string $postLink,
-        Image   $image = null)
+        string $postTitle,
+        ?string $postContent = null,
+        ?string $postLink = null,
+        ?Image $image = null
+    )
     {
-        $this->postFactory->fromUserInput($postTitle, $user, $image, $postContent, $postLink);
         $this->postRepository->insertPost(
             $this->postFactory->fromUserInput($postTitle, $user, $image, $postContent, $postLink)
         );
     }
-
     public function getPostsWithCommentRow(): array
     {
         $posts = $this->postRepository->getPosts();
         foreach ($posts as &$post) {
-            $post['comment_count'] = $this->postRepository->countComments($post['post_id']);
+            $post['comment_count'] = $this->postRepository->countComments($post['postID']);
         }
         return $posts;
     }
-
-
-
 }

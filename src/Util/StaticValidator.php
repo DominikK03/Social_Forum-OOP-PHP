@@ -3,114 +3,90 @@
 namespace app\Util;
 
 use AllowDynamicProperties;
-use app\Enum\Role;
 use app\Exception\EmptyCommentException;
-use app\Exception\FileIsntImageException;
+use app\Exception\KeyAlreadyExistException;
+use app\Exception\KeyDoesntExistException;
 use app\Exception\MasterRoleException;
 use app\Exception\NotProperSizeException;
-use app\Exception\PasswordDoesntMatchException;
 use app\Exception\UserDoesntExistException;
-use app\Exception\WrongPasswordException;
-use app\MysqlClient;
-use app\Exception\EmailAlreadyExistsException;
-use app\Exception\UsernameAlreadyExistsException;
+use app\Exception\ValuesArentEqualException;
 
-
-#[AllowDynamicProperties] class StaticValidator
+#[AllowDynamicProperties]
+class StaticValidator
 {
-
-
     /**
-     * @throws EmailAlreadyExistsException
+     * @throws KeyAlreadyExistException
      */
-    public static function assertEmailExists(string $email, ?array $users)
+    public static function assertKeyDoesNotExist($key, ?array $array)
     {
-        if (!is_null($users) && in_array($email, $users)) {
-            throw new EmailAlreadyExistsException();
+        if (!is_null($array) && in_array($key, $array)) {
+            throw new KeyAlreadyExistException();
         }
     }
-
-    /**
-     * @throws UsernameAlreadyExistsException
-     */
-    public static function assertUsernameExists(string $username, ?array $users)
+    public static function assertKeyExist($key, ?array $array)
     {
-        if (!is_null($users) && in_array($username, $users)) {
-            throw new UsernameAlreadyExistsException();
+        if(is_null($array) || !in_array($key, $array)){
+            throw new KeyDoesntExistException();
         }
+
     }
 
-    /**
-     * @throws PasswordDoesntMatchException
-     * @throws UserDoesntExistException
-     */
-    public static function verifyLoginRequest(?object $user, string $username, string $password, ?string $passwordHash)
-    {
-        if ($user == null || $username !== $user->getUsername()){
-            throw new UserDoesntExistException();
-        } elseif (!password_verify($password, $passwordHash)){
-            throw new PasswordDoesntMatchException();
-        }
-    }
-
-    /**
-     * @throws PasswordDoesntMatchException
-     */
-    public static function assertConfirmPassword(string $password, string $passwordHash)
-    {
-        if (!password_verify($password, $passwordHash)){
-            throw new PasswordDoesntMatchException();
-        }
-    }
-
-    /**
-     * @throws FileIsntImageException
-     */
-    public static function assertIsImage(string $fileType)
-    {
-        $allowedTypes = array('image/jpg', 'image/jpeg', 'image/png', 'image/gif');
-        if (!in_array($fileType,$allowedTypes)){
-            throw new FileIsntImageException();
-        }
-    }
     /**
      * @throws NotProperSizeException
      */
-    public static function assertIsProperSize(int $fileSize)
+    public static function assertGreaterThan($value, $limit)
     {
-        if(!($fileSize < 1000000)){
+        if ($value <= $limit) {
             throw new NotProperSizeException();
         }
     }
 
-    public static function assertEmptyComment(string $commentContent)
+    /**
+     * @throws EmptyCommentException
+     */
+    public static function assertNotEmpty(string $value)
     {
-        if (empty($commentContent))
-        {
+        if (empty($value)) {
             throw new EmptyCommentException();
         }
     }
-    public static function assertConfirmPasswordDelete(string $deletePassword, string $passwordHash)
+    /**
+     * @throws ValuesArentEqualException
+     */
+    public static function assertEquals($value1, $value2)
     {
-        if (!password_verify($deletePassword, $passwordHash))
-        {
-            throw new WrongPasswordException();
+        if ($value1 !== $value2) {
+            throw new ValuesArentEqualException();
         }
     }
 
-    public static function assertUserDoesntExist(?object $user)
+    public static function assertInArray($value, array $allowedValues, string $exceptionClass)
     {
-        if (is_null($user)){
+        if (!in_array($value, $allowedValues)) {
+            throw new $exceptionClass();
+        }
+    }
+
+    /**
+     * @throws NotProperSizeException
+     */
+    public static function assertLessThanOrEqual($value, $limit)
+    {
+        if ($value > $limit) {
+            throw new NotProperSizeException();
+        }
+    }
+    public static function assertNotNull(?object $value)
+    {
+        if(is_null($value)){
             throw new UserDoesntExistException();
         }
     }
-
-    public static function assertMasterRoleChange(object $user)
+    public static function assertNotEqual($firstValue, $secondValue)
     {
-        if ($user->getRole() === Role::master)
+        if ($firstValue === $secondValue)
         {
             throw new MasterRoleException();
         }
-
     }
 }

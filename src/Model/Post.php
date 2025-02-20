@@ -7,19 +7,20 @@ use DateTimeInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
+const POST = 'post';
 class Post
 {
-
-    public function __construct(private UuidInterface     $postId,
-                                private string            $title,
-                                private DateTimeInterface $createdAt,
-                                private User              $user,
-                                private ?Image            $image,
-                                private ?string           $content = null,
-                                private ?string           $link = null)
+    public function __construct(
+        private UuidInterface $postId,
+        private string $title,
+        private DateTimeInterface $createdAt,
+        private User $user,
+        private ?Image $image,
+        private ?string $content = null,
+        private ?string $link = null
+    )
     {
     }
-
     /**
      * @param string $title
      */
@@ -27,7 +28,6 @@ class Post
     {
         $this->title = $title;
     }
-
     /**
      * @param string $content
      */
@@ -35,7 +35,6 @@ class Post
     {
         $this->content = $content;
     }
-
     /**
      * @param string $link
      */
@@ -43,8 +42,6 @@ class Post
     {
         $this->link = $link;
     }
-
-
     /**
      * @return UuidInterface
      */
@@ -52,7 +49,6 @@ class Post
     {
         return $this->postId;
     }
-
     /**
      * @return User
      */
@@ -60,7 +56,6 @@ class Post
     {
         return $this->user;
     }
-
     /**
      * @return string|null
      */
@@ -68,7 +63,6 @@ class Post
     {
         return $this->content;
     }
-
     /**
      * @return Image|null
      */
@@ -76,7 +70,6 @@ class Post
     {
         return $this->image;
     }
-
     /**
      * @return DateTimeInterface
      */
@@ -84,7 +77,6 @@ class Post
     {
         return $this->createdAt;
     }
-
     /**
      * @return string|null
      */
@@ -92,7 +84,6 @@ class Post
     {
         return $this->link;
     }
-
     /**
      * @return string
      */

@@ -12,6 +12,5 @@ class UserFactory
     {
         $passwordHash = password_hash($password, PASSWORD_BCRYPT);
         return new User(Uuid::uuid4(), $username, $email, $passwordHash, new DateTime());
-
     }
 }

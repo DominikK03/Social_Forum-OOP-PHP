@@ -6,5 +6,8 @@ use Exception;
 
 class NotProperSizeException extends Exception
 {
-    protected $message = 'Image has not proper size';
+    public function __construct()
+    {
+        parent::__construct('Image has not proper size');
+    }
 }

@@ -7,5 +7,8 @@ use Exception;
 
 class EmptyCommentException extends Exception
 {
-    protected $message = "Comment cannot be empty";
+    public function __construct()
+    {
+        parent::__construct("Comment cannot be empty");
+    }
 }

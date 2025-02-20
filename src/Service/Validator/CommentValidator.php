@@ -8,7 +8,6 @@ class CommentValidator
 {
     public function validate(string $commentContent)
     {
-        StaticValidator::assertEmptyComment($commentContent);
+        StaticValidator::assertNotEmpty($commentContent);
     }
-
 }

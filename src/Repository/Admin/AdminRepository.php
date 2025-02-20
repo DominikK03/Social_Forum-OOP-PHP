@@ -3,41 +3,41 @@
 namespace app\Repository\Admin;
 
 use AllowDynamicProperties;
+use app\PDO\MysqlClientInterface;
 use app\Enum\Role;
 use app\Model\User;
-use app\MysqlClientInterface;
+use const app\Model\USER;
 
-#[AllowDynamicProperties] class AdminRepository implements AdminRepositoryInterface
+#[AllowDynamicProperties]
+class AdminRepository implements AdminRepositoryInterface
 {
     public function __construct(MysqlClientInterface $client)
     {
         $this->client = $client;
     }
-
     public function updateUserRole(User $user, Role $role)
     {
         $builder = $this->client
             ->createQueryBuilder()
             ->update('user', ['role' => $role->name])
-            ->where('user_name', '=', $user->getUsername()
+            ->where('userName', '=', $user->getUsername()
             );
-        $this->client->pushWithoutResults($builder->getUpdateQuery());
+        $this->client->persist($builder->getUpdateQuery());
     }
-
     public function deletePost(string $getDeletePostID)
     {
         $builder = $this->client
             ->createQueryBuilder()
             ->delete('post')
-            ->where('post_id', '=', $getDeletePostID);
-        $this->client->pushWithoutResults($builder->getDeleteQuery());
+            ->where('postID', '=', $getDeletePostID);
+        $this->client->persist($builder->getDeleteQuery());
     }
     public function deleteCommentByID(string $commentID)
     {
         $builder = $this->client
             ->createQueryBuilder()
             ->delete('comment')
-            ->where('comment_id', '=', $commentID);
-        $this->client->pushWithoutResults($builder->getDeleteQuery());
+            ->where('commentID', '=', $commentID);
+        $this->client->persist($builder->getDeleteQuery());
     }
 }

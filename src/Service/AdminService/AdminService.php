@@ -13,7 +13,8 @@ use app\Repository\Post\PostRepositoryInterface;
 use app\Service\Image\ImageService;
 use app\Service\Validator\RoleChangeValidator;
 
-#[AllowDynamicProperties] class AdminService
+#[AllowDynamicProperties]
+class AdminService
 {
     public function __construct(
         AdminRepositoryInterface $adminRepository,
@@ -29,19 +30,22 @@ use app\Service\Validator\RoleChangeValidator;
         $this->imageService = $imageService;
         $this->postRepository = $postRepository;
     }
-
     public function changeUserRole(string $username, Role $role)
     {
         $user = $this->authRepository->findByUsername($username);
-        $this->roleChangeValidator->validate($user);
+        $this->roleChangeValidator->validateRoleChange($user);
         $this->adminRepository->updateUserRole($user, $role);
     }
     public function deletePostByID(string $deletePostID)
     {
         $post = $this->postRepository->getPost($deletePostID);
-        if ($post['image'] != ''){
+        if ($post['image'] != '') {
             $this->imageService->imageRepository->deleteImage($post['image']);
         }
-        $this->adminRepository->deletePost($post['post_id']);
+        $this->adminRepository->deletePost($post['postID']);
+    }
+    public function deleteCommentByID(string $commentID)
+    {
+        $this->adminRepository->deleteCommentByID($commentID);
     }
 }

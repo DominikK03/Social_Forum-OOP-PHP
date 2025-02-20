@@ -9,17 +9,24 @@ use Ramsey\Uuid\UuidInterface;
 
 class User
 {
+    const USER = 'user';
+    const USERID = 'userID';
+    const USERNAME = 'userName';
+    const EMAIL = 'email';
+    const PASSWORD_HASH = 'passwordHash';
+    const CREATED_AT = 'createdAt';
+    const ROLE = 'role';
 
-    public function __construct(private UuidInterface     $userId,
-                                private string            $userName,
-                                private string            $email,
-                                private string            $passwordHash,
-                                private DateTimeInterface $createdAt,
-                                private Role              $role = Role::user)
+    public function __construct(
+        private UuidInterface $userId,
+        private string $userName,
+        private string $email,
+        private string $passwordHash,
+        private DateTimeInterface $createdAt,
+        private Role $role = Role::user
+    )
     {
     }
-
-
     /**
      * @param string $email
      */
@@ -27,7 +34,6 @@ class User
     {
         $this->email = $email;
     }
-
     /**
      * @param string $passwordHash
      */
@@ -35,7 +41,6 @@ class User
     {
         $this->passwordHash = $passwordHash;
     }
-
     /**
      * @param Role $role
      */
@@ -43,8 +48,6 @@ class User
     {
         $this->role = $role;
     }
-
-
     /**
      * @return string
      */
@@ -52,7 +55,6 @@ class User
     {
         return $this->userId;
     }
-
     /**
      * @return string
      */
@@ -60,7 +62,6 @@ class User
     {
         return $this->userName;
     }
-
     /**
      * @return string
      */
@@ -68,7 +69,6 @@ class User
     {
         return $this->email;
     }
-
     /**
      * @return Role
      */
@@ -76,7 +76,6 @@ class User
     {
         return $this->role;
     }
-
     /**
      * @return string
      */
@@ -84,7 +83,6 @@ class User
     {
         return $this->passwordHash;
     }
-
     /**
      * @return DateTime
      */

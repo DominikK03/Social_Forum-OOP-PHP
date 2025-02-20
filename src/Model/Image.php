@@ -1,47 +1,14 @@
 <?php
 
 namespace app\Model;
-
-class Image
+readonly class Image
 {
-    public function __construct(private string $imageName,
-                                private string $imageTmpName,
-                                private string $imageType,
-                                private int    $imageSize)
+    public function __construct(
+        public string $imageName,
+        public string $imageTmpName,
+        public string $imageType,
+        public int $imageSize
+    )
     {
     }
-
-    /**
-     * @return string
-     */
-    public function getImageName(): string
-    {
-        return $this->imageName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getImageTmpName(): string
-    {
-        return $this->imageTmpName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getImageType(): string
-    {
-        return $this->imageType;
-    }
-
-    /**
-     * @return int
-     */
-    public function getImageSize(): int
-    {
-        return $this->imageSize;
-    }
-
-
 }

@@ -4,5 +4,8 @@ namespace app\Exception;
 
 class WrongPasswordException extends \Exception
 {
-    protected $message = 'Invalid password';
+    public function __construct()
+    {
+        parent::__construct('Invalid password');
+    }
 }

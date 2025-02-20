@@ -13,5 +13,4 @@ class CommentFactory
     {
         return new Comment(Uuid::uuid4(), $content, new DateTime(), $user, $postID);
     }
-
 }

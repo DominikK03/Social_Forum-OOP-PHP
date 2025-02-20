@@ -6,6 +6,9 @@ use Exception;
 
 class EmailAlreadyExistsException extends Exception
 {
-    protected $message = 'E-mail already exists';
+    public function __construct()
+    {
+        parent::__construct('E-mail already exists');
+    }
 
 }

@@ -8,6 +8,7 @@ use app\View\ViewInterface;
 
 #[AllowDynamicProperties] class AccountInfoView implements ViewInterface
 {
+    const ACCOUNT_INFO_VIEW = 'account/accountinfo.html';
     public function __construct(array $data)
     {
         $this->data = $data;
@@ -15,6 +16,6 @@ use app\View\ViewInterface;
 
     public function renderWithRenderer(TemplateRenderer $renderer): string
     {
-        return $renderer->renderHtml('account/accountinfo.html', $this->data);
+        return $renderer->renderHtml(self::ACCOUNT_INFO_VIEW, $this->data);
     }
 }

@@ -6,6 +6,8 @@ use Exception;
 
 class PasswordDoesntMatchException extends Exception
 {
-    protected $message = 'Wrong Password given';
-
+    public function __construct()
+    {
+        parent::__construct('Wrong Password given');
+    }
 }

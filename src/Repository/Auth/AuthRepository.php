@@ -3,40 +3,38 @@
 namespace app\Repository\Auth;
 
 use AllowDynamicProperties;
+use app\Exception\KeyAlreadyExistException;
+use app\PDO\MysqlClientInterface;
 use app\Enum\Role;
-use app\Exception\PasswordDoesntMatchException;
-use app\Exception\UserDoesntExistException;
 use app\Exception\UsernameAlreadyExistsException;
 use app\Model\User;
-use app\MysqlClientInterface;
 use app\Util\StaticValidator;
 use DateTime;
 use Ramsey\Uuid\Uuid;
+use const app\Model\USER;
 
-#[AllowDynamicProperties] class AuthRepository implements AuthRepositoryInterface
+#[AllowDynamicProperties]
+class AuthRepository implements AuthRepositoryInterface
 {
     public function __construct(MysqlClientInterface $client)
     {
         $this->client = $client;
     }
-
     public function registerUser(User $user)
     {
         $insertBuilder = $this->client
             ->createQueryBuilder()
             ->insert('user',
                 [
-                    'user_id' => $user->getUserId(),
-                    'user_name' => $user->getUsername(),
+                    'userID' => $user->getUserId(),
+                    'userName' => $user->getUsername(),
                     'email' => $user->getEmail(),
-                    'password_hash' => $user->getPasswordHash(),
+                    'passwordHash' => $user->getPasswordHash(),
                     'role' => $user->getRole()->name,
-                    'created_at' => $user->getCreatedAt()->format('Y-m-d H:i:s')
+                    'createdAt' => $user->getCreatedAt()->format('Y-m-d H:i:s')
                 ]);
-        $this->client->pushWithoutResults($insertBuilder->getInsertQuery());
-
+        $this->client->persist($insertBuilder->getInsertQuery());
     }
-
     /**
      * @throws \Exception
      */
@@ -46,57 +44,57 @@ use Ramsey\Uuid\Uuid;
             ->createQueryBuilder()
             ->select()
             ->from('user')
-            ->where('user_name', '=', $username);
-        $userData = $this->client->getOneOrNullResult($builder->getSelectQuery());
+            ->where('userName', '=', $username);
+        $userData = $this->client->persist($builder->getSelectQuery())->getOneOrNullResult();
         if ($userData) {
             return new User(
-                Uuid::fromString($userData['user_id']),
-                $userData['user_name'],
+                Uuid::fromString($userData['userID']),
+                $userData['userName'],
                 $userData['email'],
-                $userData['password_hash'],
-                new DateTime($userData['created_at']),
-                Role::fromName($userData['role'])
+                $userData['passwordHash'],
+                new DateTime($userData['createdAt']),
+                Role::from($userData['role'])
             );
         }
         return null;
     }
-
     /**
-     * @throws UsernameAlreadyExistsException
+     * @throws UsernameAlreadyExistsException|KeyAlreadyExistException
      */
     public function verifyUsernameExistence(string $username): void
     {
         $builder = $this->client
             ->createQueryBuilder()
-            ->select('user_name')
+            ->select(['userName'])
             ->from('user')
-            ->where('user_name', '=', $username);
-        StaticValidator::assertUsernameExists($username, $this->client->getOneOrNullResult($builder->getSelectQuery()));
-
+            ->where('userName', '=', $username);
+        StaticValidator::assertKeyExist(
+            $username,
+            $this->client->persist($builder->getSelectQuery())->getOneOrNullResult(),
+        );
     }
-
     public function verifyEmailExistence(string $email): void
     {
         $builder = $this->client
             ->createQueryBuilder()
-            ->select('email')
+            ->select(['email'])
             ->from('user')
             ->where('email', '=', $email);
-        StaticValidator::assertEmailExists($email, $this->client->getOneOrNullResult($builder->getSelectQuery()));
+        StaticValidator::assertKeyExist(
+            $email,
+            $this->client->persist($builder->getSelectQuery())->getOneOrNullResult(),
+        );
     }
-
-    /**
-     * @throws PasswordDoesntMatchException
-     * @throws UserDoesntExistException
-     * @throws \Exception
-     */
-    public function verifyLoginRequest(string $username, string $password): void
+    public function verifyPasswordCorrectness(string $username, string $password)
     {
-        StaticValidator::verifyLoginRequest(
-            $this->findByUsername($username),
-            $username,
+        $builder = $this->client
+            ->createQueryBuilder()
+            ->select(['userName', 'passwordHash'])
+            ->from('user')
+            ->where('userName', '=', $username);
+        password_verify(
             $password,
-            $this->findByUsername($username)?->getPasswordHash());
+            $this->client->persist($builder->getSelectQuery())->getOneOrNullResult()['passwordHash']
+        );
     }
-
 }

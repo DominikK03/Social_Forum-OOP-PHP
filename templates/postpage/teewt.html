@@ -1,0 +1,20 @@
+<ul style="list-style-type: none">
+    <li>
+        {{PostView}}
+    </li>
+    <li>
+        <div class="comment-box">
+            <form id="commentForm">
+                <textarea class="comment-input" id="commentInput" rows="2" placeholder="Write a comment..."></textarea>
+                <small id="commentInfo" class="text-secondary mt-1 mb-1" style="display: none;"></small>
+                <small id="comment-invalid-feedback" class="text-secondary mt-1 mb-1" style="display: none;"></small>
+                <div class="text-end">
+                    <button type="submit" class="btn post-btn btn-primary" id="commentButton">Comment</button>
+                </div>
+            </form>
+        </div>
+    </li>
+    <li class="comment-content">
+        {{CommentView}}
+    </li>
+</ul>

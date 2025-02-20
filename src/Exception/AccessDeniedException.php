@@ -1,10 +1,10 @@
 <?php
 
 namespace app\Exception;
-
 class AccessDeniedException extends \Exception
 {
-    protected $code = 403;
-
-
+    public function __construct()
+    {
+        parent::__construct('', 403);
+    }
 }

@@ -1,19 +1,9 @@
 <?php
 
 namespace app\Enum;
-
-enum Role
+enum Role: string
 {
-    case user;
-    case admin;
-    case master;
-
-    public static function fromName(string $name): ?self {
-        foreach (self::cases() as $case) {
-            if ($case->name === $name) {
-                return $case;
-            }
-        }
-        return null;
-    }
+    case user = 'user';
+    case admin = 'admin';
+    case master = 'master';
 }

@@ -4,5 +4,8 @@ namespace app\Exception;
 
 class FileIsntImageException extends \Exception
 {
-    protected $message = 'File is not an image';
+   public function __construct()
+   {
+       parent::__construct('File is not an image');
+   }
 }
