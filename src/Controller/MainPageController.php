@@ -42,7 +42,7 @@ class MainPageController
         $this->adminService = $adminService;
         $this->viewFactory = $viewFactory;
     }
-    #[Route("/", 'GET', [Role::user, Role::admin, Role::master])]
+    #[Route("/", 'GET', [Role::user])]
     public function MainPage(MainPageRequest $request): ResponseInterface
     {
         if ($this->authService->isLoggedIn()) {
@@ -57,7 +57,7 @@ class MainPageController
             return new NotLoggedInRedirectResponse();
         }
     }
-    #[Route('/postData', 'POST', [Role::user, Role::admin, Role::master])]
+    #[Route('/postData', 'POST', [Role::user])]
     public function handlePost(PostRequest $request): ResponseInterface
     {
         try {
@@ -89,7 +89,7 @@ class MainPageController
             return new UnsuccessfullResponse();
         }
     }
-    #[Route('/deletePost', 'POST', [Role::admin, Role::master])]
+    #[Route('/deletePost', 'POST', [Role::admin])]
     public function handlePostDelete(PostRequest $request): ResponseInterface
     {
         $this->adminService->deletePostByID($request->getDeletePostID());

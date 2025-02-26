@@ -33,7 +33,7 @@ class AdminPanelController
         $this->authService = $authService;
         $this->viewFactory = $viewFactory;
     }
-    #[Route('/admin', 'GET', [Role::admin, Role::master])]
+    #[Route('/admin', 'GET', [Role::admin])]
     public function adminPanelView(AdminRequest $request): ResponseInterface
     {
         if ($this->authService->isLoggedIn()) {
@@ -42,7 +42,7 @@ class AdminPanelController
             return new NotLoggedInRedirectResponse();
         }
     }
-    #[Route('/admin/changeRole', 'POST', [Role::admin, Role::master])]
+    #[Route('/admin/changeRole', 'POST', [Role::admin])]
     public function changeRole(AdminRequest $request): ResponseInterface
     {
         try {

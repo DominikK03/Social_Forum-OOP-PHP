@@ -11,6 +11,7 @@ use app\Core\HTTP\Response\ErrorResponses\AccessDeniedResponse;
 use app\Core\HTTP\Response\ErrorResponses\PageNotFoundResponse;
 use app\Core\HTTP\Response\ResponseInterface;
 use app\Core\HTTP\Router;
+use app\Core\HTTP\Security;
 use app\Exception\AccessDeniedException;
 use app\Model\User;
 use app\Util\TemplateRenderer;
@@ -52,8 +53,10 @@ class Kernel
 
     private function authorize(Request $request, $routeData)
     {
-        RequestValidator::validate($request,$routeData->getRoles());
+        $user = $request->getSession(User::USER);
+        Security::assertAccess($user['role'], $routeData->getRoles());
     }
+
 
     /**
      * @throws \ReflectionException
