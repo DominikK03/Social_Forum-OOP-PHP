@@ -83,7 +83,7 @@ class AuthController
             return new UnsuccessfullResponse(['message' => $e->getMessage()]);
         }
     }
-    #[Route('/logout', 'GET', [Role::user, Role::admin, Role::master])]
+    #[Route('/logout', 'GET', [Role::user])]
     public function logout(LogoutRequest $request): ResponseInterface
     {
         $this->authService->logoutUser();

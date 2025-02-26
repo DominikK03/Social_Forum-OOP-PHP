@@ -39,7 +39,7 @@ class AccountController
         $this->imageService = $imageService;
         $this->viewFactory = $viewFactory;
     }
-    #[Route('/account', 'GET', [Role::user, Role::admin, Role::master])]
+    #[Route('/account', 'GET', [Role::user])]
     public function accountView(AccountRequest $request): ResponseInterface
     {
         if ($this->authService->isLoggedIn()) {
@@ -56,7 +56,7 @@ class AccountController
             return new NotLoggedInRedirectResponse();
         }
     }
-    #[Route('/account/passwordChange', 'POST', [Role::user, Role::admin, Role::master])]
+    #[Route('/account/passwordChange', 'POST', [Role::user])]
     public function passwordChange(AccountRequest $request): ResponseInterface
     {
         try {
@@ -70,7 +70,7 @@ class AccountController
             return new InvalidPasswordResponse();
         }
     }
-    #[Route('/account/postAvatar', 'POST', [Role::user, Role::admin, Role::master])]
+    #[Route('/account/postAvatar', 'POST', [Role::user])]
     public function setAvatarImage(AccountRequest $request): ResponseInterface
     {
         try {
@@ -90,7 +90,7 @@ class AccountController
             return new UnsuccessfullResponse();
         }
     }
-    #[Route('/account/deleteAccount', 'POST', [Role::user, Role::admin, Role::master])]
+    #[Route('/account/deleteAccount', 'POST', [Role::user])]
     public function deleteAccount(AccountRequest $request): ResponseInterface
     {
         try {

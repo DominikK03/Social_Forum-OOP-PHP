@@ -34,7 +34,7 @@ class PostPageController
         $this->adminService = $adminService;
         $this->viewFactory = $viewFactory;
     }
-    #[Route('/post', 'GET', [Role::user, Role::admin, Role::master])]
+    #[Route('/post', 'GET', [Role::user])]
     public function postPageView(CommentRequest $request): ResponseInterface
     {
         $postPageView =
@@ -51,7 +51,7 @@ class PostPageController
             );
         return new HtmlResponse($postPageView->renderWithRenderer($this->renderer));
     }
-    #[Route('/post/postComment', 'POST', [Role::user, Role::admin, Role::master])]
+    #[Route('/post/postComment', 'POST', [Role::user])]
     public function handleComment(CommentRequest $request): ResponseInterface
     {
         try {
@@ -66,7 +66,7 @@ class PostPageController
         }
 
     }
-    #[Route('/post/deleteComment', 'POST', [Role::admin, Role::master])]
+    #[Route('/post/deleteComment', 'POST', [Role::admin])]
     public function handleCommentDelete(CommentRequest $request): ResponseInterface
     {
         $this->adminService->deleteCommentByID($request->getCommentID());
