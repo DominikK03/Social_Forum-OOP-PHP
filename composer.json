@@ -1,6 +1,6 @@
 {
   "require": {
-    "php": "8.3",
+    "php": "8.3.8",
     "psr/container": "^2.0",
     "ext-fileinfo": "*",
     "ramsey/uuid": "^4.7",

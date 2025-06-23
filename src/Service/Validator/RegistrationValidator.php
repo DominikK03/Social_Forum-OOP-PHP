@@ -12,12 +12,12 @@ class RegistrationValidator
     {
         $this->repository = $repository;
     }
-    public function validateRegistration(string $username, string $email)
+    public function validateRegistration(string $username, string $email): void
     {
-        $this->repository->verifyUsernameExistence($username);
+        $this->repository->assureUsernameDoesntExist($username);
         $this->repository->verifyEmailExistence($email);
     }
-    public function validateLogin(string $username, string $password)
+    public function validateLogin(string $username, string $password): void
     {
         $this->repository->verifyUsernameExistence($username);
         $this->repository->verifyPasswordCorrectness($username, $password);

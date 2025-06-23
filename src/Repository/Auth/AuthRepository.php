@@ -4,6 +4,7 @@ namespace app\Repository\Auth;
 
 use AllowDynamicProperties;
 use app\Exception\KeyAlreadyExistException;
+use app\Exception\KeyDoesntExistException;
 use app\PDO\MysqlClientInterface;
 use app\Enum\Role;
 use app\Exception\UsernameAlreadyExistsException;
@@ -11,7 +12,6 @@ use app\Model\User;
 use app\Util\StaticValidator;
 use DateTime;
 use Ramsey\Uuid\Uuid;
-use const app\Model\USER;
 
 #[AllowDynamicProperties]
 class AuthRepository implements AuthRepositoryInterface
@@ -20,7 +20,7 @@ class AuthRepository implements AuthRepositoryInterface
     {
         $this->client = $client;
     }
-    public function registerUser(User $user)
+    public function registerUser(User $user): void
     {
         $insertBuilder = $this->client
             ->createQueryBuilder()
@@ -59,7 +59,7 @@ class AuthRepository implements AuthRepositoryInterface
         return null;
     }
     /**
-     * @throws UsernameAlreadyExistsException|KeyAlreadyExistException
+     * @throws KeyDoesntExistException
      */
     public function verifyUsernameExistence(string $username): void
     {
@@ -73,6 +73,10 @@ class AuthRepository implements AuthRepositoryInterface
             $this->client->persist($builder->getSelectQuery())->getOneOrNullResult(),
         );
     }
+
+    /**
+     * @throws KeyAlreadyExistException
+     */
     public function verifyEmailExistence(string $email): void
     {
         $builder = $this->client
@@ -80,12 +84,12 @@ class AuthRepository implements AuthRepositoryInterface
             ->select(['email'])
             ->from('user')
             ->where('email', '=', $email);
-        StaticValidator::assertKeyExist(
+        StaticValidator::assertKeyDoesNotExist(
             $email,
             $this->client->persist($builder->getSelectQuery())->getOneOrNullResult(),
         );
     }
-    public function verifyPasswordCorrectness(string $username, string $password)
+    public function verifyPasswordCorrectness(string $username, string $password): void
     {
         $builder = $this->client
             ->createQueryBuilder()
@@ -96,5 +100,23 @@ class AuthRepository implements AuthRepositoryInterface
             $password,
             $this->client->persist($builder->getSelectQuery())->getOneOrNullResult()['passwordHash']
         );
+    }
+
+    /**
+     * @throws KeyAlreadyExistException
+     */
+    public function assureUsernameDoesntExist(string $username): void
+    {
+        $builder = $this->client
+            ->createQueryBuilder()
+            ->select(['userName'])
+            ->from('user')
+            ->where('userName', '=', $username);
+        StaticValidator::assertKeyDoesNotExist(
+            $username,
+            $this->client->persist($builder->getSelectQuery())->getOneOrNullResult(),
+        );
+
+
     }
 }

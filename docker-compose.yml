@@ -4,6 +4,7 @@ services:
       context: ./docker
       dockerfile: Dockerfile
     restart: always
+    container_name: sf-app
     working_dir: /var/www
     volumes:
       - ./:/var/www
@@ -11,6 +12,7 @@ services:
   nginx:
     image: nginx:latest
     restart: always
+    container_name: sf-server
     depends_on:
       - app
     ports:
@@ -20,6 +22,7 @@ services:
       - ./docker/nginx:/etc/nginx/conf.d
   db:
     image: mysql:8.0
+    container_name: sf-db
     volumes:
       - ./docker/mysql:/docker-entrypoint-initdb.d
     restart: always
